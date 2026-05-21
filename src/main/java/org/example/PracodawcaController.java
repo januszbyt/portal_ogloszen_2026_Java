@@ -45,7 +45,7 @@ public class PracodawcaController {
         }
         offersTable.setItems(mockOffersList);
 
-        // Scenariusz 2.5: Słuchacz kliknięcia w tabelę - ładuje listę kandydatów dla wybranej oferty
+   
         offersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 candidatesListView.setItems(newSelection.getApplications());
