@@ -3,10 +3,8 @@ target/
 .vscode/
 *.iml
 *.class
-.project
-.classpath
-.settings/
 bin/
+
 
 # Archives and build packages
 *.rar
