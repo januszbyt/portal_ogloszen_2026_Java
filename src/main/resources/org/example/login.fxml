@@ -27,12 +27,12 @@
 
       <HBox alignment="CENTER" maxWidth="-Infinity" prefHeight="18.0" prefWidth="282.0" spacing="20.0">
          <children>
-            <RadioButton fx:id="userRadio" mnemonicParsing="false" selected="true" text="Użytkownik">
+            <RadioButton fx:id="userRadio" mnemonicParsing="false" selected="true" text="Kandydat">
                <toggleGroup>
                   <ToggleGroup fx:id="roleGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="businessRadio" mnemonicParsing="false" text="Przedsiębiorca" toggleGroup="$roleGroup" />
+            <RadioButton fx:id="businessRadio" mnemonicParsing="false" text="Pracodawca" toggleGroup="$roleGroup" />
          </children>
       </HBox>
 
@@ -40,7 +40,7 @@
          <children>
             <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
             <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
-            <Hyperlink fx:id="skipLink" onAction="#handleSkip" text="Kontynuuj bez logowania" />
+            <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
          </children>
       </VBox>
    </children>
