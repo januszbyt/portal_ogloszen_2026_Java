@@ -20,7 +20,8 @@
       
       <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="300.0" spacing="10.0">
          <children>
-            <TextField fx:id="usernameField" maxWidth="1.7976931348623157E308" promptText="Imię i Nazwisko" />
+            <TextField fx:id="firstNameField" maxWidth="1.7976931348623157E308" promptText="Imię" />
+            <TextField fx:id="lastNameField" maxWidth="1.7976931348623157E308" promptText="Nazwisko" />
             <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
             <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
             <PasswordField fx:id="confirmPasswordField" maxWidth="1.7976931348623157E308" promptText="Powtórz hasło" />

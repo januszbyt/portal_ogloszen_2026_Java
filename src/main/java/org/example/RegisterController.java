@@ -10,7 +10,10 @@ public class RegisterController {
     // Odwołania do elementów z pliku FXML (fx:id)
 
     @FXML
-    private TextField usernameField;
+    private TextField firstNameField;
+
+    @FXML
+    private TextField lastNameField;
 
     @FXML
     private TextField emailField;
@@ -36,6 +39,23 @@ public class RegisterController {
     @FXML
     private Hyperlink loginLink;
 
+    @FXML
+    public void initialize() {
+        // Słuchacz zmiany roli w celu dynamicznego dostosowania formularza
+        roleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == businessRadio) {
+                lastNameField.setVisible(false);
+                lastNameField.setManaged(false);
+                firstNameField.setPromptText("Nazwa firmy");
+                lastNameField.clear();
+            } else {
+                lastNameField.setVisible(true);
+                lastNameField.setManaged(true);
+                firstNameField.setPromptText("Imię");
+            }
+        });
+    }
+
     // Metoda pomocnicza do wyświetlania okienek z komunikatami
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
@@ -49,13 +69,16 @@ public class RegisterController {
     @FXML
     void handleRegister(ActionEvent event) {
         // Pobieranie danych wpisanych przez użytkownika z usunięciem zbędnych spacji
-        String username = usernameField.getText() != null ? usernameField.getText().trim() : "";
+        String firstName = firstNameField.getText() != null ? firstNameField.getText().trim() : "";
+        String lastName = lastNameField.getText() != null ? lastNameField.getText().trim() : "";
         String email = emailField.getText() != null ? emailField.getText().trim() : "";
         String password = passwordField.getText() != null ? passwordField.getText() : "";
         String confirmPassword = confirmPasswordField.getText() != null ? confirmPasswordField.getText() : "";
 
+        boolean isEmployer = businessRadio.isSelected();
+
         // 1. Walidacja: Sprawdzenie czy wymagane pola nie są puste
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (firstName.isEmpty() || (!isEmployer && lastName.isEmpty()) || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wszystkie pola są wymagane!");
             return;
         }
@@ -113,7 +136,12 @@ public class RegisterController {
 
         // Jeśli wszystko jest poprawne, logujemy w konsoli i wyświetlamy sukces
         System.out.println("--- Nowa Rejestracja ---");
-        System.out.println("Login: " + username);
+        if (isEmployer) {
+            System.out.println("Nazwa firmy: " + firstName);
+        } else {
+            System.out.println("Imię: " + firstName);
+            System.out.println("Nazwisko: " + lastName);
+        }
         System.out.println("Email: " + email);
         System.out.println("Rola: " + role);
         System.out.println("------------------------");
