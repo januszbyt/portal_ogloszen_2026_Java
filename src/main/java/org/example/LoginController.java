@@ -17,15 +17,6 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
-    private RadioButton userRadio;
-
-    @FXML
-    private RadioButton businessRadio;
-
-    @FXML
-    private ToggleGroup roleGroup;
-
-    @FXML
     private Hyperlink registerLink;
 
     private void showAlert(Alert.AlertType type, String title, String content) {
@@ -40,7 +31,6 @@ public class LoginController {
     private void handleLogin(ActionEvent event) {
         String email = emailField.getText() != null ? emailField.getText().trim() : "";
         String password = passwordField.getText() != null ? passwordField.getText() : "";
-        RadioButton selectedRole = (RadioButton) roleGroup.getSelectedToggle();
         
         // 1. Walidacja: Puste pola
         if (email.isEmpty() || password.isEmpty()) {
@@ -55,20 +45,12 @@ public class LoginController {
             return;
         }
 
-        // 3. Walidacja: Wybór roli
-        if (selectedRole == null) {
-            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Proszę wybrać odpowiednią rolę!");
-            return;
-        }
-
-        String role = selectedRole.getText();
         System.out.println("Próba logowania:");
         System.out.println("Email: " + email);
         System.out.println("Hasło: ****");
-        System.out.println("Rola: " + role);
 
         // Tutaj dodasz logikę sprawdzania bazy danych w przyszłości
-        showAlert(Alert.AlertType.INFORMATION, "Logowanie", "Próba logowania dla roli: " + role + "\n(Integracja z bazą danych w kolejnym kroku)");
+        showAlert(Alert.AlertType.INFORMATION, "Logowanie", "Pomyślna walidacja danych logowania.\n(Integracja z bazą danych w kolejnym kroku)");
     }
 
     
