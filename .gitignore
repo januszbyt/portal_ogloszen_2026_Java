@@ -1,0 +1,16 @@
+target/
+.idea/
+.vscode/
+*.iml
+*.class
+.project
+.classpath
+.settings/
+bin/
+
+# Archives and build packages
+*.rar
+*.zip
+
+# Local tools/binaries
+tools/
