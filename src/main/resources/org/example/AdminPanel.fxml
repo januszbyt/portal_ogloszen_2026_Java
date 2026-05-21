@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Panel Administratora" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #e74c3c;" text="Wyloguj" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Zarządzanie Użytkownikami">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <TextField fx:id="txtSearchUser" prefWidth="300.0" promptText="Szukaj użytkownika (e-mail, rola)..." />
+                              <Button fx:id="btnSearchUser" mnemonicParsing="false" text="Szukaj" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
+                        </HBox>
+                     </top>
+                     <center>
+                        <TableView fx:id="tableUsers" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="colUserId" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="colUserRole" prefWidth="100.0" text="Rola" />
+                              <TableColumn fx:id="colUserEmail" prefWidth="200.0" text="E-mail" />
+                              <TableColumn fx:id="colUserDate" prefWidth="150.0" text="Data rejestracji" />
+                              <TableColumn fx:id="colUserStatus" prefWidth="120.0" text="Status" />
+                          </columns>
+                           <BorderPane.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </BorderPane.margin>
+                        </TableView>
+                     </center>
+                     <bottom>
+                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="btnBlockUser" mnemonicParsing="false" text="Zablokuj" />
+                              <Button fx:id="btnUnblockUser" mnemonicParsing="false" text="Odblokuj" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" style="-fx-text-fill: red;" text="Usuń konto (Trwale)" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
+                        </HBox>
+                     </bottom>
+                  </BorderPane>
+               </content>
+          </Tab>
+          <Tab text="Moderacja Ogłoszeń">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                     <top>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <TextField fx:id="txtSearchOffer" prefWidth="300.0" promptText="Szukaj ogłoszenia..." />
+                              <Button fx:id="btnSearchOffer" mnemonicParsing="false" text="Szukaj" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
+                        </HBox>
+                     </top>
+                     <center>
+                        <TableView fx:id="tableOffers" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="colOfferId" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="colOfferTitle" prefWidth="250.0" text="Tytuł stanowiska" />
+                              <TableColumn fx:id="colOfferCompany" prefWidth="150.0" text="Firma" />
+                              <TableColumn fx:id="colOfferDate" prefWidth="120.0" text="Data dodania" />
+                              <TableColumn fx:id="colOfferStatus" prefWidth="100.0" text="Status" />
+                          </columns>
+                           <BorderPane.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </BorderPane.margin>
+                        </TableView>
+                     </center>
+                     <bottom>
+                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button fx:id="btnViewOffer" mnemonicParsing="false" text="Podgląd ogłoszenia" />
+                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" style="-fx-text-fill: red;" text="Usuń ofertę (Trwale)" />
+                           </children>
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
+                        </HBox>
+                     </bottom>
+                  </BorderPane>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
