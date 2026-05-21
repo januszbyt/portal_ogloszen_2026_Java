@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox prefHeight="650.0" prefWidth="950.0" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.PracodawcaController">
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+   <children>
+      
+      <VBox prefWidth="280.0" spacing="8.0">
+         <children>
+            <Label text="Formularz Ogłoszenia">
+               <font><Font name="System Bold" size="14.0" /></font>
+            </Label>
+            <TextField fx:id="titleField" promptText="Tytuł stanowiska" />
+            <ComboBox fx:id="categoryCombo" maxWidth="1.7976931348623157E308" promptText="Wybierz branżę" />
+            <TextField fx:id="locationField" promptText="Lokalizacja" />
+            <HBox spacing="10.0">
+               <children>
+                  <TextField fx:id="salaryMinField" promptText="Min PLN" />
+                  <TextField fx:id="salaryMaxField" promptText="Max PLN" />
+               </children>
+            </HBox>
+            <TextArea fx:id="descriptionArea" prefHeight="120.0" promptText="Opis i wymagania..." wrapText="true" />
+            
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddOffer" text="Publikuj" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSaveEdit" text="Zapisz zmiany (Edycja)" />
+            
+            <VBox prefHeight="100.0" VBox.vgrow="ALWAYS" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogout" text="Wyloguj się" />
+         </children>
+      </VBox>
+      
+      <VBox prefWidth="620.0" spacing="15.0">
+         <children>
+            
+            <VBox prefHeight="300.0" spacing="5.0">
+               <children>
+                  <Label text="Moje oferty">
+                     <font><Font name="System Bold" size="12.0" /></font>
+                  </Label>
+                  <TableView fx:id="offersTable" prefHeight="240.0">
+                    <columns>
+                      <TableColumn fx:id="colTitle" prefWidth="150.0" text="Stanowisko" />
+                      <TableColumn fx:id="colCategory" prefWidth="110.0" text="Branża" />
+                      <TableColumn fx:id="colLocation" prefWidth="110.0" text="Lokalizacja" />
+                      <TableColumn fx:id="colSalary" prefWidth="130.0" text="Wynagrodzenie" />
+                      <TableColumn fx:id="colStatus" prefWidth="90.0" text="Status" />
+                    </columns>
+                  </TableView>
+                  <HBox alignment="TOP_RIGHT" spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleEditClick" text="Edytuj" />
+                        <Button mnemonicParsing="false" onAction="#handleCloseClick" text="Zakończ rekrutację" />
+                        <Button mnemonicParsing="false" onAction="#handleDeleteOffer" text="Usuń całkowicie" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <VBox prefHeight="220.0" spacing="5.0">
+               <children>
+                  <Label text="Kandydaci dla zaznaczonej oferty">
+                     <font><Font name="System Bold" size="12.0" /></font>
+                  </Label>
+                  <ListView fx:id="candidatesListView" prefHeight="150.0" />
+                  <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleChangeStatusAccept" text="Zmień status: W toku" />
+                        <Button mnemonicParsing="false" onAction="#handleChangeStatusReject" text="Zmień status: Odrzucony" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+         </children>
+      </VBox>
+   </children>
+</HBox>
