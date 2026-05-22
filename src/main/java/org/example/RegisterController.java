@@ -5,9 +5,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.io.IOException;
 
-public class RegisterController {
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.security.MessageDigest; //biblioteka potrzeba do haszowania hasła
 
-    // Odwołania do elementów z pliku FXML (fx:id)
+public class RegisterController {
 
     @FXML
     private TextField firstNameField;
@@ -55,8 +60,7 @@ public class RegisterController {
             }
         });
     }
-
-    // Metoda pomocnicza do wyświetlania okienek z komunikatami
+ // Metoda pomocnicza do wyświetlania okienek z komunikatami
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -65,105 +69,159 @@ public class RegisterController {
         alert.showAndWait();
     }
 
-    // Metoda wywoływana po kliknięciu przycisku "Zarejestruj się"
+    // Metoda do szyfrowania hasła 
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException("Błąd podczas haszowania hasła", ex);
+        }
+    }
+// Metoda wywoływana po kliknięciu przycisku "Zarejestruj się"
     @FXML
     void handleRegister(ActionEvent event) {
         // Pobieranie danych wpisanych przez użytkownika z usunięciem zbędnych spacji
         String firstName = firstNameField.getText() != null ? firstNameField.getText().trim() : "";
         String lastName = lastNameField.getText() != null ? lastNameField.getText().trim() : "";
-        String email = emailField.getText() != null ? emailField.getText().trim() : "";
+        String email = emailField.getText() != null ? emailField.getText().trim() : "";                     
         String password = passwordField.getText() != null ? passwordField.getText() : "";
         String confirmPassword = confirmPasswordField.getText() != null ? confirmPasswordField.getText() : "";
 
+        // Sprawdzanie, który radioButton jest zaznaczony
         boolean isEmployer = businessRadio.isSelected();
 
-        // 1. Walidacja: Sprawdzenie czy wymagane pola nie są puste
+        // 1. Walidacje
         if (firstName.isEmpty() || (!isEmployer && lastName.isEmpty()) || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wszystkie pola są wymagane!");
             return;
         }
 
-        // 2. Walidacja: Format adresu email (musi zawierać @ i domenę)
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!email.matches(emailRegex)) {
-            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wprowadzony adres email ma niepoprawny format! Upewnij się, że zawiera znak '@' oraz poprawną domenę (np. nazwa@domena.pl).");
+            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wprowadzony adres email ma niepoprawny format!");
             return;
         }
 
-        // 3. Walidacja: Sprawdzenie czy hasła są identyczne
         if (!password.equals(confirmPassword)) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Podane hasła nie są identyczne!");
             return;
         }
 
-        // 4. Walidacja: Wymogi siły hasła: min 8 znaków, co najmniej jedna wielka litera, cyfra i znak specjalny
         if (password.length() < 8) {
             showAlert(Alert.AlertType.WARNING, "Słabe hasło", "Hasło musi mieć co najmniej 8 znaków!");
             return;
         }
 
-        boolean hasUppercase = false;
-        boolean hasDigit = false;
-        boolean hasSpecial = false;
-
+        boolean hasUppercase = false, hasDigit = false, hasSpecial = false;
         for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                hasUppercase = true;
-            } else if (Character.isDigit(c)) {
-                hasDigit = true;
-            } else if (!Character.isLetterOrDigit(c)) {
-                hasSpecial = true;
-            }
+            if (Character.isUpperCase(c)) hasUppercase = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else if (!Character.isLetterOrDigit(c)) hasSpecial = true;
         }
 
         if (!hasUppercase || !hasDigit || !hasSpecial) {
             showAlert(Alert.AlertType.WARNING, "Słabe hasło", 
-                "Hasło musi zawierać co najmniej:\n" +
-                "- jedną wielką literę,\n" +
-                "- jedną cyfrę,\n" +
-                "- jeden znak specjalny (np. !, @, #, $, % itp.)."
+                "Hasło musi zawierać co najmniej:\n- jedną wielką literę,\n- jedną cyfrę,\n- jeden znak specjalny."
             );
             return;
         }
 
-        // 5. Walidacja: Sprawdzenie, którą rolę wybrał użytkownik (Kandydat czy Pracodawca)
         RadioButton selectedRole = (RadioButton) roleGroup.getSelectedToggle();
         if (selectedRole == null) {
-            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Proszę wybrać rolę (Kandydat lub Pracodawca)!");
+            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Proszę wybrać rolę!");
             return;
         }
-        String role = selectedRole.getText();
+        
+        // Ustalenie wartości roli do bazy (np. "Candidate" lub "Employer")
+        String roleValue = isEmployer ? "Employer" : "Candidate";
 
-        // Jeśli wszystko jest poprawne, logujemy w konsoli i wyświetlamy sukces
-        System.out.println("--- Nowa Rejestracja ---");
-        if (isEmployer) {
-            System.out.println("Nazwa firmy: " + firstName);
-        } else {
-            System.out.println("Imię: " + firstName);
-            System.out.println("Nazwisko: " + lastName);
-        }
-        System.out.println("Email: " + email);
-        System.out.println("Rola: " + role);
-        System.out.println("------------------------");
+        // Zapytania SQL
+        String insertUserSql = "INSERT INTO Users (Email, PasswordHash, Role, IsBlocked) VALUES (?, ?, ?, 0)";
+        String insertCandidateSql = "INSERT INTO Candidates (CandidateID, FirstName, LastName) VALUES (?, ?, ?)";
+        String insertEmployerSql = "INSERT INTO Employers (EmployerID, CompanyName) VALUES (?, ?)";
 
-        showAlert(Alert.AlertType.INFORMATION, "Rejestracja pomyślna", 
-            "Konto dla roli: " + role + " zostało pomyślnie utworzone!\n" +
-            "Możesz się teraz zalogować."
-        );
+        // 2. Połączenie z bazą i transakcja
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Wyłączamy AutoCommit, aby zapewnić integralność danych (transakcja)
+            conn.setAutoCommit(false); 
 
-        // Po pomyślnej rejestracji automatycznie przełączamy na ekran logowania
-        try {
-            App.setRoot("login");
+            // Wstawiamy użytkownika i pobieramy wygenerowany klucz 
+            try (PreparedStatement userStmt = conn.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
+                userStmt.setString(1, email);
+                userStmt.setString(2, hashPassword(password));
+                userStmt.setString(3, roleValue);
+                
+                int affectedRows = userStmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Tworzenie użytkownika nie powiodło się, brak zmodyfikowanych wierszy.");
+                }
+
+                // Pobieramy nadany UserID
+                try (ResultSet generatedKeys = userStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int generatedUserId = generatedKeys.getInt(1);
+
+                        // Wstawiamy dane do tabeli podrzędnej na podstawie roli
+                        if (isEmployer) {
+                            try (PreparedStatement empStmt = conn.prepareStatement(insertEmployerSql)) {
+                                empStmt.setInt(1, generatedUserId); // Klucz obcy
+                                empStmt.setString(2, firstName);    // Pole firstName przechowuje nazwę firmy
+                                empStmt.executeUpdate();
+                            }
+                        } else {
+                            try (PreparedStatement candStmt = conn.prepareStatement(insertCandidateSql)) {
+                                candStmt.setInt(1, generatedUserId); // Klucz obcy
+                                candStmt.setString(2, firstName);
+                                candStmt.setString(3, lastName);
+                                candStmt.executeUpdate();
+                            }
+                        }
+                    } else {
+                        throw new SQLException("Tworzenie użytkownika nie powiodło się, nie uzyskano ID.");
+                    }
+                }
+                
+                // tutaj zatwierdzenie transakcji, jeśli wszystko przebiegło pomyślnie
+                conn.commit(); 
+                
+                showAlert(Alert.AlertType.INFORMATION, "Rejestracja pomyślna", 
+                    "Konto dla roli: " + selectedRole.getText() + " zostało pomyślnie utworzone!\nMożesz się teraz zalogować."
+                );
+
+                // Przełączenie na logowanie
+                App.setRoot("login");
+
+            } catch (SQLException e) {
+                // Wycofanie zmian, jeśli wystąpi jakiś błąd
+                conn.rollback(); 
+                e.printStackTrace();
+                
+                // Sprawdzenie czy email już nie istnieje 
+                if(e.getErrorCode() == 1062) {
+                    showAlert(Alert.AlertType.ERROR, "Błąd rejestracji", "Użytkownik o podanym adresie email już istnieje!");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Błąd bazy danych", "Nie udało się zarejestrować użytkownika.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Błąd połączenia", "Wystąpił problem z połączeniem z bazą danych.");
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Błąd podczas przełączania ekranu: " + e.getMessage());
         }
     }
 
-    // Metoda przełączająca użytkownika na ekran logowania
     @FXML
     void switchToLogin(ActionEvent event) throws IOException {
-
-        // Wywołanie metody setRoot z klasy App
         App.setRoot("login");
     }
 }
