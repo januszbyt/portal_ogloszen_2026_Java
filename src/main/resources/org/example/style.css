@@ -5,8 +5,15 @@
     -bg-color: #ffffff; /*Tlo biale*/
     -panel-bg: #ffffff;
     -text-color: #222222;
-    -accent-color: #000000;
+    
+    /* ZMIENIONO: czarny na kolor z Panelu Administratora */
+    -accent-color: #2c3e50; 
+    
     -input-bg: #f9f9f9;
+    
+    /* ZMIENNE: Kolory dla paska nawigacji (Navbar) i przycisków ostrzegawczych */
+    -navbar-bg: #2c3e50;       /* Ciemnoszary/granatowy kolor paska na górze */
+    -danger-color: #e74c3c;    /* Czerwony kolor dla przycisków typu "Wyloguj" / "Usuń" */
     
     -fx-font-family: 'Segoe UI', sans-serif;
     -fx-background-color: -bg-color;
@@ -63,7 +70,7 @@
 
 /* Zwykle przyciski style */
 .button {
-    -fx-background-color: -accent-color; /* Czarne tlo */
+    -fx-background-color: -accent-color; /* Kolor z akcentu */
     -fx-text-fill: #ffffff;              /* Bialy tekst */
     -fx-font-weight: bold;
     -fx-padding: 10px 25px;

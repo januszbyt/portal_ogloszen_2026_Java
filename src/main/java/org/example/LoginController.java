@@ -19,11 +19,24 @@ public class LoginController {
     @FXML
     private Hyperlink registerLink;
 
+    // DODANA METODA: Wstrzykiwanie style.css do okienek
+    private void applyStylesToDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        
+        // Podpięcie CSS do alertów
+        applyStylesToDialog(alert); 
+        
         alert.showAndWait();
     }
 
@@ -77,6 +90,9 @@ public class LoginController {
         emailDialog.setHeaderText("Krok 1: Wprowadź swój adres e-mail");
         emailDialog.setContentText("Email:");
         
+        // DODANO: Podpięcie CSS do okna wpisywania e-maila
+        applyStylesToDialog(emailDialog);
+        
         Optional<String> emailResult = emailDialog.showAndWait();
         if (!emailResult.isPresent()) {
             return; // Użytkownik anulował
@@ -111,6 +127,9 @@ public class LoginController {
         codeDialog.setHeaderText("Krok 2: Wprowadź kod weryfikacyjny");
         codeDialog.setContentText("Kod (6 cyfr):");
         
+        // DODANO: Podpięcie CSS do okna kodu
+        applyStylesToDialog(codeDialog);
+        
         Optional<String> codeResult = codeDialog.showAndWait();
         if (!codeResult.isPresent()) {
             return; // Użytkownik anulował
@@ -127,6 +146,9 @@ public class LoginController {
         passwordDialog.setTitle("Odzyskiwanie hasła");
         passwordDialog.setHeaderText("Krok 3: Wprowadź nowe hasło");
         passwordDialog.setContentText("Nowe hasło:");
+        
+        // DODANO: Podpięcie CSS do okna nowego hasła
+        applyStylesToDialog(passwordDialog);
         
         Optional<String> passwordResult = passwordDialog.showAndWait();
         if (!passwordResult.isPresent()) {

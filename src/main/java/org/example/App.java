@@ -17,9 +17,14 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("login"), 640, 480);
+        // Zwiększamy domyślny rozmiar początkowy na 800x600
+        scene = new Scene(loadFXML("login"), 800, 600);
         stage.setScene(scene);
-        stage.setTitle("Ekran logowania");
+        stage.setTitle("System Ofert Pracy");
+        
+        // Ta linijka sprawia, że okno otwiera się na cały ekran (maksymalizacja)
+        stage.setMaximized(true); 
+        
         stage.show();
     }
 
@@ -35,5 +40,4 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }
