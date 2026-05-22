@@ -84,110 +84,126 @@ public class LoginController {
 
     @FXML
     private void handleForgotPassword(ActionEvent event) {
-        // 1. Podanie e-maila
-        TextInputDialog emailDialog = new TextInputDialog();
-        emailDialog.setTitle("Odzyskiwanie hasła");
-        emailDialog.setHeaderText("Krok 1: Wprowadź swój adres e-mail");
-        emailDialog.setContentText("Email:");
+        String email = "";
         
-        // DODANO: Podpięcie CSS do okna wpisywania e-maila
-        applyStylesToDialog(emailDialog);
-        
-        Optional<String> emailResult = emailDialog.showAndWait();
-        if (!emailResult.isPresent()) {
-            return; // Użytkownik anulował
+        // 1. Podanie e-maila w pętli
+        while (true) {
+            // Przekazujemy 'email' do konstruktora, aby po błędzie tekst nie znikał
+            TextInputDialog emailDialog = new TextInputDialog(email); 
+            emailDialog.setTitle("Odzyskiwanie hasła");
+            emailDialog.setHeaderText("Krok 1: Wprowadź swój adres e-mail");
+            emailDialog.setContentText("Email:");
+            
+            // Podpięcie CSS do okna wpisywania e-maila
+            applyStylesToDialog(emailDialog);
+            
+            Optional<String> emailResult = emailDialog.showAndWait();
+            if (!emailResult.isPresent()) {
+                return; 
+            }
+            
+            email = emailResult.get().trim();
+            if (email.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Adres e-mail nie może być pusty!");
+                continue; 
+            }
+            
+            // Walidacja formatu e-maila
+            String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+            if (!email.matches(emailRegex)) {
+                showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wprowadzony adres email ma niepoprawny format!");
+                continue; 
+            }
+            
+            break; // Email jest poprawny - wychodzimy z pętli i idziemy dalej
         }
         
-        String email = emailResult.get().trim();
-        if (email.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Adres e-mail nie może być pusty!");
-            return;
-        }
-        
-        // 2. Walidacja formatu e-maila
-        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        if (!email.matches(emailRegex)) {
-            showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wprowadzony adres email ma niepoprawny format!");
-            return;
-        }
-        
-        // 3. Generowanie 6-cyfrowego kodu weryfikacyjnego
+        // 2. Generowanie 6-cyfrowego kodu weryfikacyjnego
         Random random = new Random();
         int verificationCode = 100000 + random.nextInt(900000); // 100000 do 999999
         
-        // 4. Symulacja wysłania wiadomości
+        // 3. Symulacja wysłania wiadomości
         showAlert(Alert.AlertType.INFORMATION, "Symulacja wysyłki e-maila",
             "Wysłano wiadomość e-mail na adres: " + email + "\n\n" +
             "Twój jednorazowy kod weryfikacyjny to: " + verificationCode + "\n\n" +
             "Zapisz ten kod i wprowadź go w kolejnym kroku.");
             
-        // 5. Wprowadzanie kodu weryfikacyjnego
-        TextInputDialog codeDialog = new TextInputDialog();
-        codeDialog.setTitle("Odzyskiwanie hasła");
-        codeDialog.setHeaderText("Krok 2: Wprowadź kod weryfikacyjny");
-        codeDialog.setContentText("Kod (6 cyfr):");
-        
-        // DODANO: Podpięcie CSS do okna kodu
-        applyStylesToDialog(codeDialog);
-        
-        Optional<String> codeResult = codeDialog.showAndWait();
-        if (!codeResult.isPresent()) {
-            return; // Użytkownik anulował
-        }
-        
-        String enteredCode = codeResult.get().trim();
-        if (!enteredCode.equals(String.valueOf(verificationCode))) {
-            showAlert(Alert.AlertType.ERROR, "Błąd weryfikacji", "Wprowadzony kod jest niepoprawny! Proces odzyskiwania został przerwany.");
-            return;
-        }
-        
-        // 6. Wprowadzanie nowego hasła
-        TextInputDialog passwordDialog = new TextInputDialog();
-        passwordDialog.setTitle("Odzyskiwanie hasła");
-        passwordDialog.setHeaderText("Krok 3: Wprowadź nowe hasło");
-        passwordDialog.setContentText("Nowe hasło:");
-        
-        // DODANO: Podpięcie CSS do okna nowego hasła
-        applyStylesToDialog(passwordDialog);
-        
-        Optional<String> passwordResult = passwordDialog.showAndWait();
-        if (!passwordResult.isPresent()) {
-            return; // Użytkownik anulował
-        }
-        
-        String newPassword = passwordResult.get();
-        
-        // 7. Walidacja nowego hasła (identycznie jak w RegisterController.java)
-        if (newPassword.length() < 8) {
-            showAlert(Alert.AlertType.WARNING, "Słabe hasło", "Hasło musi mieć co najmniej 8 znaków!");
-            return;
-        }
-        
-        boolean hasUppercase = false;
-        boolean hasDigit = false;
-        boolean hasSpecial = false;
-        
-        for (char c : newPassword.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                hasUppercase = true;
-            } else if (Character.isDigit(c)) {
-                hasDigit = true;
-            } else if (!Character.isLetterOrDigit(c)) {
-                hasSpecial = true;
+        // 4. Wprowadzanie kodu weryfikacyjnego 
+        while (true) {
+            TextInputDialog codeDialog = new TextInputDialog();
+            codeDialog.setTitle("Odzyskiwanie hasła");
+            codeDialog.setHeaderText("Krok 2: Wprowadź kod weryfikacyjny");
+            codeDialog.setContentText("Kod (6 cyfr):");
+            
+            // Podpięcie CSS do okna kodu
+            applyStylesToDialog(codeDialog);
+            
+            Optional<String> codeResult = codeDialog.showAndWait();
+            if (!codeResult.isPresent()) {
+                return; // Użytkownik kliknął Anuluj
             }
+            
+            String enteredCode = codeResult.get().trim();
+            if (!enteredCode.equals(String.valueOf(verificationCode))) {
+                showAlert(Alert.AlertType.ERROR, "Błąd weryfikacji", "Wprowadzony kod jest niepoprawny! Spróbuj ponownie.");
+                continue; // Wraca na początek pętli kodu
+            }
+            
+            break; // Kod poprawny
         }
         
-        if (!hasUppercase || !hasDigit || !hasSpecial) {
-            showAlert(Alert.AlertType.WARNING, "Słabe hasło", 
-                "Hasło musi zawierać co najmniej:\n" +
-                "- jedną wielką literę,\n" +
-                "- jedną cyfrę,\n" +
-                "- jeden znak specjalny (np. !, @, #, $, % itp.)."
-            );
-            return;
+        // 5. Wprowadzanie nowego hasła 
+        String newPassword = "";
+        while (true) {
+            TextInputDialog passwordDialog = new TextInputDialog(newPassword);
+            passwordDialog.setTitle("Odzyskiwanie hasła");
+            passwordDialog.setHeaderText("Krok 3: Wprowadź nowe hasło");
+            passwordDialog.setContentText("Nowe hasło:");
+            
+            // Podpięcie CSS do okna nowego hasła
+            applyStylesToDialog(passwordDialog);
+            
+            Optional<String> passwordResult = passwordDialog.showAndWait();
+            if (!passwordResult.isPresent()) {
+                return; // Użytkownik kliknął Anuluj
+            }
+            
+            newPassword = passwordResult.get();
+            
+            // Walidacja nowego hasła
+            if (newPassword.length() < 8) {
+                showAlert(Alert.AlertType.WARNING, "Słabe hasło", "Hasło musi mieć co najmniej 8 znaków!");
+                continue;
+            }
+            
+            boolean hasUppercase = false;
+            boolean hasDigit = false;
+            boolean hasSpecial = false;
+            
+            for (char c : newPassword.toCharArray()) {
+                if (Character.isUpperCase(c)) {
+                    hasUppercase = true;
+                } else if (Character.isDigit(c)) {
+                    hasDigit = true;
+                } else if (!Character.isLetterOrDigit(c)) {
+                    hasSpecial = true;
+                }
+            }
+            
+            if (!hasUppercase || !hasDigit || !hasSpecial) {
+                showAlert(Alert.AlertType.WARNING, "Słabe hasło", 
+                    "Hasło musi zawierać co najmniej:\n" +
+                    "- jedną wielką literę,\n" +
+                    "- jedną cyfrę,\n" +
+                    "- jeden znak specjalny (np. !, @, #, $, % itp.)."
+                );
+                continue; 
+            }
+            
+            break; 
         }
         
-        // 8. Sukces i symulacja zapisu
+        // 6. Sukces i symulacja zapisu
         System.out.println("--- Zmiana hasła (Odzyskiwanie) ---");
         System.out.println("Email: " + email);
         System.out.println("Status: Hasło zostało pomyślnie zmienione");
