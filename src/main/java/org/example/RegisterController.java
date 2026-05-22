@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.security.MessageDigest; //biblioteka potrzeba do haszowania hasła
 
 public class RegisterController {
 
@@ -70,21 +69,8 @@ public class RegisterController {
     }
 
     // Metoda do szyfrowania hasła 
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (Exception ex) {
-            throw new RuntimeException("Błąd podczas haszowania hasła", ex);
-        }
-    }
+
+    
 // Metoda wywoływana po kliknięciu przycisku "Zarejestruj się"
     @FXML
     void handleRegister(ActionEvent event) {
@@ -140,7 +126,7 @@ public class RegisterController {
             return;
         }
         
-        // Ustalenie wartości roli do bazy (np. "Candidate" lub "Employer")
+        // Ustalenie wartości roli do bazy. Pracownik czy Pracodawca
         String roleValue = isEmployer ? "Employer" : "Candidate";
 
         // Zapytania SQL
@@ -156,7 +142,7 @@ public class RegisterController {
             // Wstawiamy użytkownika i pobieramy wygenerowany klucz 
             try (PreparedStatement userStmt = conn.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
                 userStmt.setString(1, email);
-                userStmt.setString(2, hashPassword(password));
+                userStmt.setString(2, SecurityUtils.hashPassword(password));
                 userStmt.setString(3, roleValue);
                 
                 int affectedRows = userStmt.executeUpdate();
@@ -189,7 +175,7 @@ public class RegisterController {
                     }
                 }
                 
-                // tutaj zatwierdzenie transakcji, jeśli wszystko przebiegło pomyślnie
+                // Tutaj zatwierdzenie transakcji, jeśli wszystko przebiegło pomyślnie
                 conn.commit(); 
                 
                 showAlert(Alert.AlertType.INFORMATION, "Rejestracja pomyślna", 
@@ -204,7 +190,7 @@ public class RegisterController {
                 conn.rollback(); 
                 e.printStackTrace();
                 
-                // Sprawdzenie czy email już nie istnieje 
+                // Sprawdzenie czy email już nie istnieje w bazie
                 if(e.getErrorCode() == 1062) {
                     showAlert(Alert.AlertType.ERROR, "Błąd rejestracji", "Użytkownik o podanym adresie email już istnieje!");
                 } else {
