@@ -1,0 +1,160 @@
+/*W przyszosci tutaj bedzie zmiana motywu*/
+
+/* Zmienne kolorow i tlo calej aplikacji */
+.root {
+    -bg-color: #ffffff; /*Tlo biale*/
+    -panel-bg: #ffffff;
+    -text-color: #222222;
+    -accent-color: #000000;
+    -input-bg: #f9f9f9;
+    
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-background-color: -bg-color;
+}
+
+/* Karta logowania i rejestracji */
+.login-box {
+    -fx-background-color: -panel-bg;
+    -fx-background-radius: 10px;
+    
+    /* Górna gruba linia (akcent) - grubosc: 5px (góra), DODANO: 1px (prawo, dól, lewo) cienka czarna ramka */
+    -fx-border-color: -accent-color;
+    -fx-border-width: 5px 1px 1px 1px; 
+    -fx-border-radius: 10px;
+    
+    /* Cień dodana wzieto z: https://getcssscan.com/css-box-shadow-examples */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 5);
+    -fx-padding: 30px;
+}
+
+/* Nglowek formularza */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text-color;
+    -fx-padding: 0 0 20px 0;
+}
+
+/* Pola tekstowe nasze inputy haslo i td... */
+.text-field, .password-field {
+    -fx-background-color: -input-bg;
+    -fx-text-fill: -text-color;
+    -fx-border-color: #cccccc;
+    
+    /* Grubosc ramki jest dodana */
+    -fx-border-width: 2px; 
+    
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+}
+
+/* Podświetlenie pola, w które aktualnie wpisujemy  */
+.text-field:focused, .password-field:focused {
+    /* Wymuszamy parametry, aby pole nie znikalo */
+    -fx-background-color: -input-bg;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+}
+
+/* Zwykle przyciski style */
+.button {
+    -fx-background-color: -accent-color; /* Czarne tlo */
+    -fx-text-fill: #ffffff;              /* Bialy tekst */
+    -fx-font-weight: bold;
+    -fx-padding: 10px 25px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+/* Zachowanie po najechaniu myszką na przycisk */
+.button:hover {
+    -fx-opacity: 0.85; 
+}
+
+/*Link przerobiony czy masz już konto*/
+.hyperlink {
+    -fx-text-fill: -text-color;
+    -fx-font-weight: bold;
+    -fx-underline: false; /* Wyłączamy domyślne podkreślenie linków */
+}
+
+/* Zachowanie po najechaniu myszką na link */
+.hyperlink:hover {
+    -fx-text-fill: -accent-color;
+    -fx-opacity: 0.7;
+}
+
+/* Style dla radio button */
+.radio-button {
+    -fx-text-fill: -text-color;
+    -fx-font-size: 14px;
+}
+
+
+/* Style specjalnie dla okienek dialogowych (Alerty) */
+.dialog-pane {
+    -fx-background-color: -panel-bg;
+}
+
+/* Wymuszenie czcionki i koloru dla wszystkich tekstów w oknie */
+.dialog-pane .label {
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-text-fill: -text-color;
+    -fx-font-size: 14px;
+}
+
+/* Tło dla górnego paska z nagłówkiem (Krok 1: Wprowadź...) */
+.dialog-pane .header-panel {
+    -fx-background-color: -panel-bg;
+}
+
+/* Pogrubienie dla nagłówka okienka */
+.dialog-pane .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Pogrubienie tekstu obok pola wpisywania (np. "Email:", "Kod:") */
+.dialog-pane > .content.label,
+.dialog-pane .content .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .button {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 20px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button:hover {
+    -fx-opacity: 0.85;
+}
+
+.dialog-pane .text-field {
+    -fx-background-color: -input-bg;
+    -fx-text-fill: -text-color;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+}
+
+.dialog-pane .text-field:focused {
+    -fx-background-color: -input-bg;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0;
+}

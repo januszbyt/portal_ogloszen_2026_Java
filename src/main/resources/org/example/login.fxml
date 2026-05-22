@@ -8,26 +8,32 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="400.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.LoginController">
-   <padding>
-      <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-   </padding>
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.LoginController">
    <children>
-      <Label text="Logowanie" />
       
-      <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="62.0" prefWidth="300.0" spacing="10.0">
+      <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-box">
          <children>
-            <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
-            <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
-         </children>
-      </VBox>
+            <Label styleClass="title-label" text="Logowanie" />
+            
+            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+               <children>
+                  <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
+                  <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </VBox>
 
-      <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="94.0" prefWidth="192.0" spacing="10.0">
-         <children>
-            <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
-            <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
-            <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+               <children>
+                  <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
+                  <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
+                  <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+               </children>
+            </VBox>
          </children>
       </VBox>
+      
    </children>
 </VBox>
