@@ -165,3 +165,33 @@
     -fx-background-radius: 6px;
     -fx-background-insets: 0;
 }
+
+/* DODANO: CIEMNY MOTYW ORAZ PRZYCISK ZMIANY MOTYWU         */
+
+.dark-mode {
+    -bg-color: #121212;
+    -panel-bg: #1e1e1e;
+    -text-color: #ffffff;
+    
+    /* Zmieniamy akcent na nieco jaśniejszy, aby lepiej wyglądał na ciemnym tle */
+    -accent-color: #4ea6e8; 
+    
+    -input-bg: #2d2d2d;
+    -navbar-bg: #111111;
+}
+
+/* Styl dla samego przycisku "Zmień motyw" */
+.theme-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-color;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-padding: 5px 15px;
+}
+
+.theme-button:hover {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: #ffffff;
+    -fx-opacity: 1.0; /* Reset opacity from standard button hover */
+}

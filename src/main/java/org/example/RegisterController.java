@@ -3,6 +3,8 @@ package org.example;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 import java.sql.Connection;
@@ -42,6 +44,27 @@ public class RegisterController {
 
     @FXML
     private Hyperlink loginLink;
+
+    @FXML
+    private Button btnZmianaMotywu;
+
+    private boolean isDarkMode = false;
+
+    @FXML
+    public void zmienMotyw(ActionEvent event) {
+        Scene scene = btnZmianaMotywu.getScene();
+        Pane root = (Pane) scene.getRoot();
+
+        if (isDarkMode) {
+            root.getStyleClass().remove("dark-mode");
+            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
+            isDarkMode = false;
+        } else {
+            root.getStyleClass().add("dark-mode");
+            btnZmianaMotywu.setText("☀ Jasny Motyw"); 
+            isDarkMode = true;
+        }
+    }
 
     @FXML
     public void initialize() {

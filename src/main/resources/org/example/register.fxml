@@ -13,6 +13,15 @@
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.RegisterController">
    <children>
+      <HBox alignment="TOP_RIGHT" maxWidth="-Infinity" prefWidth="400.0">
+         <children>
+            <Button fx:id="btnZmianaMotywu" mnemonicParsing="false" onAction="#zmienMotyw" styleClass="theme-button" text="🌙 Ciemny Motyw" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </HBox>
+
       <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="15.0" styleClass="login-box">
          <children>
             
