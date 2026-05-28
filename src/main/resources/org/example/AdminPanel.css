@@ -1,0 +1,158 @@
+/* Główne tło aplikacji - jasnoszare, aby karty się wyróżniały */
+
+.root {
+    -bg-color: #f4f7f6;
+    -fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    -fx-background-color: -bg-color;
+}
+/* Górny pasek zostawiamy ciemny dla kontrastu, jak nagłówek formularza */
+.header-bar {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 10px 20px;
+}
+/* --- STYLE PRZYCISKÓW --- */
+/* Wszystkie przyciski robimy płaskie, zaokrąglone i kolorowe */
+
+.button {
+    -fx-background-color: #2c3e50; /* Ciemnoniebieski z ekranu logowania */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 22px;
+    -fx-cursor: hand;
+    -fx-effect: none; /* Wymuszamy usunięcie domyślnych cieni JavaFX */
+    -fx-border-width: 0;
+}
+
+.button:hover {
+    -fx-opacity: 0.85;
+}
+/* Czerwone przyciski (Wyloguj) - używamy czerwonego z logowania */
+
+.button-danger {
+    -fx-background-color: #e74c3c;
+    -fx-effect: none;
+}
+.button-danger:hover {
+    -fx-background-color: #c0392b;
+}
+/* STYLE INPUTÓW (POLA WYSZUKIWANIA) */
+
+.tab-pane .text-field {
+    -fx-background-color: white;
+    -fx-text-fill: -text-color;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+    -fx-effect: none;
+}
+.tab-pane .text-field:focused {
+    -fx-border-color: #2c3e50;
+    -fx-border-width: 2px;
+    -fx-background-insets: 0;
+}
+
+/* MINIMALISTYCZNE ZAKŁADKI (TABS)  */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 25px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.tab-pane .tab-label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Aktywna zakładka jest podkreślona, jak w Material Design */
+.tab-pane .tab:selected {
+    -fx-border-color: transparent transparent #2c3e50 transparent;
+    -fx-border-width: 0 0 3px 0;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #2c3e50;
+}
+
+
+/* Bierzemy BorderPane wewnątrz każdego Tab i stylizujemy go na login-box */
+
+.tab-content-area > .tab-pane .tab-pane-content > BorderPane,
+.tab-pane .border-pane-inside-tab {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 6);
+
+    /* Gruba linia akcentu na górze, jak w logowaniu */
+
+    -fx-border-color: #2c3e50;
+    -fx-border-width: 6px 0 0 0; 
+    -fx-border-radius: 12px;
+    
+    /* Marginesy, aby karta "unosiła się" w powietrzu */
+    -fx-margin: 20px;
+}
+/*NOWOCZESNA TABELA (TableView) */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-width: 0;
+    -fx-effect: none;
+}
+
+/* Czyste, płaskie nagłówki */
+.table-view .column-header-background {
+    -fx-background-color: #fcfcfc;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #e0e0e0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 1px 0 0;
+    -fx-padding: 12px 0;
+    -fx-size: 50px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+/* Gładkie, wysokie wiersze */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f5f5f5 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-cell-size: 45px;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #f7f9fa;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #2c3e50;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+
+.table-view:focused {
+    -fx-background-insets: 0;
+
+}
