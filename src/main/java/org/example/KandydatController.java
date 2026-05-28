@@ -161,7 +161,7 @@ public class KandydatController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // MySQL error 1062 to naruszenie zasady UNIQUE (CandidateID + OfferID w tabeli Applications)
+            // MySQL ekrror 1062 to naruszenie zasady UNIQUE (CandidateID + OfferID w tabeli Applications)
             if (e.getErrorCode() == 1062) { 
                  showAlert(Alert.AlertType.WARNING, "Uwaga", "Istnieje już Twoja aplikacja na to stanowisko w bazie.");
             } else {

@@ -61,7 +61,7 @@ public class JobOffer {
         this.category = category;
     }
 
-    public String getLocation() {
+    public String getLocation() { 
         return location;
     }
 
