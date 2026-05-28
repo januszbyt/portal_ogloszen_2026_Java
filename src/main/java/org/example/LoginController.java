@@ -92,7 +92,11 @@ public class LoginController {
 
         // Weryfikacja danych logowania w bazie danych
         String hashedPassword = SecurityUtils.hashPassword(password);
-        String sql = "SELECT Role, IsBlocked FROM Users WHERE Email = ? AND PasswordHash = ?";
+        String sql = "SELECT u.UserID, u.Role, u.IsBlocked, c.FirstName, e.CompanyName " +
+                     "FROM Users u " +
+                     "LEFT JOIN Candidates c ON u.UserID = c.CandidateID " +
+                     "LEFT JOIN Employers e ON u.UserID = e.EmployerID " +
+                     "WHERE u.Email = ? AND u.PasswordHash = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -109,16 +113,21 @@ public class LoginController {
                         return;
                     }
                     
+                    int userId = rs.getInt("UserID");
                     String role = rs.getString("Role");
-                    System.out.println("Zalogowano pomyślnie. Rola: " + role);
+                    String name = "Employer".equals(role) ? rs.getString("CompanyName") : rs.getString("FirstName");
+                    System.out.println("Zalogowano pomyślnie. Rola: " + role + ", Nazwa: " + name);
+                    
+                    // Inicjalizacja sesji użytkownika (przekazujemy imię/nazwę firmy)
+                    UserSession.init(userId, email, role, name);
                     
                     // Przekierowanie zależne od roli użytkownika
                     if ("Employer".equals(role)) {
                         App.setRoot("pracodawca"); // Upewnij się, że plik to pracodawca.fxml
                     } else if ("Candidate".equals(role)) {
-                        App.setRoot("kandydat");   // Upewnij się, że plik to kandydat.fxml
+                        App.setRoot("wyszukiwarka"); // Przekierowanie kandydata z serwera
                     } else if ("Admin".equals(role)) {
-                        App.setRoot("AdminPanel"); // Wczyta plik AdminPanel.fxml
+                        App.setRoot("AdminPanel"); // Twoje przekierowanie dla admina
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Błąd logowania", "Nieznana rola użytkownika w bazie danych.");
                     }

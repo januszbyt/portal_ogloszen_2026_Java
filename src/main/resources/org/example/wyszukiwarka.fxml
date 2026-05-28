@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+
 <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="300.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.WyszukiwarkaController">
    <top>
       <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="40.0" minWidth="200.0" prefHeight="60.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
@@ -27,12 +28,20 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000;" text="Mój Profil" textFill="WHITE">
+                  <Label fx:id="lblWelcome" text="Witaj!" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets right="15.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000; -fx-cursor: hand;" text="Mój Profil" textFill="WHITE">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnLogout1" layoutX="585.0" layoutY="28.0" mnemonicParsing="false" style="-fx-background-color: #e74c3c;" text="Wyloguj" textFill="WHITE">
+                  <Button fx:id="btnLogout1" layoutX="585.0" layoutY="28.0" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c; -fx-cursor: hand;" text="Wyloguj" textFill="WHITE">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -57,11 +66,11 @@
                      <center>
                         <TableView fx:id="tableUsers" minHeight="150.0" minWidth="300.0" BorderPane.alignment="CENTER">
                           <columns>
-                            <TableColumn fx:id="colUserId" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Stanowisko" />
-                            <TableColumn fx:id="colUserRole" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Branża" />
-                              <TableColumn fx:id="colUserEmail" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Lokalizacja" />
-                              <TableColumn fx:id="colUserDate" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" text="Wynagrodzenie" />
-                              <TableColumn fx:id="colUserStatus" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" text="Status" />
+                            <TableColumn fx:id="colUserId" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Stanowisko" />
+                            <TableColumn fx:id="colUserRole" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Branża" />
+                              <TableColumn fx:id="colUserEmail" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Lokalizacja" />
+                              <TableColumn fx:id="colUserDate" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Wynagrodzenie" />
+                              <TableColumn fx:id="colUserStatus" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Status" />
                           </columns>
                            <BorderPane.margin>
                               <Insets left="15.0" right="15.0" />
@@ -87,8 +96,8 @@
                               <HBox alignment="CENTER_LEFT" spacing="15.0">
                                  <children>
                                     <TextField fx:id="txtSearchUser" minWidth="100.0" prefWidth="300.0" promptText="Szukaj pracy (fraza)..." />
-                                    <Button fx:id="btnSearchUser" minWidth="50.0" mnemonicParsing="false" prefWidth="80.0" text="Szukaj" />
-                                    <Button fx:id="btnSearchUser1" minWidth="50.0" mnemonicParsing="false" onAction="#obslugaPrzyciskuFiltry" prefWidth="80.0" text="Filtry" />
+                                    <Button fx:id="btnSearchUser" minWidth="50.0" mnemonicParsing="false" prefWidth="80.0" style="-fx-cursor: hand;" text="Szukaj" />
+                                    <Button fx:id="btnSearchUser1" minWidth="50.0" mnemonicParsing="false" onAction="#obslugaPrzyciskuFiltry" prefWidth="80.0" style="-fx-cursor: hand;" text="Filtry" />
                                  </children>
                                  <padding>
                                     <Insets left="15.0" right="15.0" />
@@ -126,11 +135,11 @@
                      <center>
                         <TableView fx:id="tableUsers1" minHeight="150.0" minWidth="300.0" BorderPane.alignment="CENTER">
                            <columns>
-                              <TableColumn fx:id="colUserId1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Stanowisko" />
-                              <TableColumn fx:id="colUserRole1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Branża" />
-                              <TableColumn fx:id="colUserEmail1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" text="Lokalizacja" />
-                              <TableColumn fx:id="colUserDate1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" text="Wynagrodzenie" />
-                              <TableColumn fx:id="colUserStatus1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" text="Status" />
+                              <TableColumn fx:id="colUserId1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Stanowisko" />
+                              <TableColumn fx:id="colUserRole1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Branża" />
+                              <TableColumn fx:id="colUserEmail1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Lokalizacja" />
+                              <TableColumn fx:id="colUserDate1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Wynagrodzenie" />
+                              <TableColumn fx:id="colUserStatus1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Status" />
                            </columns>
                            <BorderPane.margin>
                               <Insets left="15.0" right="15.0" />

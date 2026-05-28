@@ -143,6 +143,9 @@ public class PracodawcaController {
 
     @FXML
     private void handleLogout(ActionEvent event) throws IOException {
+        // Czyszczenie sesji użytkownika
+        UserSession.clear();
+        
         App.setRoot("login");
     }
 

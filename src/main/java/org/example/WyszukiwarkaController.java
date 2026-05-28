@@ -1,12 +1,18 @@
 package org.example;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import java.io.IOException;
 
 public class WyszukiwarkaController {
 
     @FXML
     private HBox panelFiltrow;
+
+    @FXML
+    private Label lblWelcome;
 
     // Ta metoda odpala się AUTOMATYCZNIE przy starcie aplikacji
     @FXML
@@ -19,6 +25,12 @@ public class WyszukiwarkaController {
         panelFiltrow.setVisible(false);
         panelFiltrow.setPrefHeight(0);
         panelFiltrow.setMinHeight(0);
+
+        // Ustawienie przywitania zalogowanego użytkownika z sesji
+        UserSession session = UserSession.getInstance();
+        if (session != null && session.getFirstName() != null) {
+            lblWelcome.setText("Witaj, " + session.getFirstName() + "!");
+        }
     }
 
     // Twoja metoda podpięta pod przycisk "Filtry"
@@ -37,5 +49,14 @@ public class WyszukiwarkaController {
             panelFiltrow.setPrefHeight(0);
             panelFiltrow.setMinHeight(0);
         }
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) throws IOException {
+        // Czyszczenie sesji użytkownika
+        UserSession.clear();
+        
+        // Przekierowanie do widoku logowania
+        App.setRoot("login");
     }
 }
