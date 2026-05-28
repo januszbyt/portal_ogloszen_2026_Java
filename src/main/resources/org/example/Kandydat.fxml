@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="500.0" minWidth="800.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.KandydatController">
+   <top>
+      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="50.0" prefHeight="60.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Portal Kandydata" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button mnemonicParsing="false" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000;" text="Mój Profil" />
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c;" text="Wyloguj" textFill="WHITE" />
+               </children>
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Dostępne Oferty Pracy">
+               <content>
+                  <BorderPane>
+                     <top>
+                        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+                           <padding>
+                              <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <TextField fx:id="txtSearchOffer" prefWidth="350.0" promptText="Szukaj po tytule stanowiska..." HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#handleSearchButton" prefWidth="80.0" style="-fx-background-color: #3498db;" text="Szukaj" textFill="WHITE" />
+                                    <Button mnemonicParsing="false" onAction="#obslugaPrzyciskuFiltry" prefWidth="80.0" text="Filtry" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </top>
+                     <center>
+                        <TableView fx:id="offersTable" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn fx:id="colTitle" prefWidth="200.0" text="Stanowisko" />
+                            <TableColumn fx:id="colCategory" prefWidth="150.0" text="Branża" />
+                            <TableColumn fx:id="colLocation" prefWidth="150.0" text="Lokalizacja" />
+                            <TableColumn fx:id="colSalary" prefWidth="150.0" text="Wynagrodzenie" />
+                          </columns>
+                           <BorderPane.margin>
+                              <Insets left="15.0" right="15.0" />
+                           </BorderPane.margin>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </center>
+                     <bottom>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#handleViewDetails" prefHeight="35.0" style="-fx-background-color: #2ecc71;" text="Szczegóły / Aplikuj" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </bottom>
+                  </BorderPane>
+               </content>
+          </Tab>
+          
+          <Tab text="Historia Aplikacji">
+               <content>
+                  <BorderPane>
+                     <top>
+                        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+                           <padding>
+                              <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                           <children>
+                              <Label text="Wysłane aplikacje:">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </top>
+                     <center>
+                        <TableView fx:id="historyTable" BorderPane.alignment="CENTER">
+                           <columns>
+                              <TableColumn fx:id="colHistTitle" prefWidth="200.0" text="Stanowisko" />
+                              <TableColumn fx:id="colHistCategory" prefWidth="150.0" text="Branża" />
+                              <TableColumn fx:id="colHistLocation" prefWidth="150.0" text="Lokalizacja" />
+                              <TableColumn fx:id="colHistStatus" prefWidth="150.0" text="Status Oferty" />
+                           </columns>
+                           <BorderPane.margin>
+                              <Insets bottom="15.0" left="15.0" right="15.0" />
+                           </BorderPane.margin>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </center>
+                  </BorderPane>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

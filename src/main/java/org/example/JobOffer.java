@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class JobOffer {
+    
+    private int id; 
     private String title;
     private String category;
     private String location;
@@ -12,6 +14,19 @@ public class JobOffer {
     private String status;
     private ObservableList<String> applications;
 
+    // Konstruktor do odczytu z bazy danych (wymaga ID)
+    public JobOffer(int id, String title, String category, String location, String salaryRange, String description) {
+        this.id = id;
+        this.title = title;
+        this.category = category;
+        this.location = location;
+        this.salaryRange = salaryRange;
+        this.description = description;
+        this.status = "Aktywna";
+        this.applications = FXCollections.observableArrayList();
+    }
+    
+    // Konstruktor dla Pracodawcy dodającego nową ofertę(baza sama nadaje ID)
     public JobOffer(String title, String category, String location, String salaryRange, String description) {
         this.title = title;
         this.category = category;
@@ -19,11 +34,15 @@ public class JobOffer {
         this.salaryRange = salaryRange;
         this.description = description;
         this.status = "Aktywna";
-        this.applications = FXCollections.observableArrayList(
-            "Jan Kowalski - CV.pdf (Oczekująca)",
-            "Anna Nowak - CV.pdf (Oczekująca)",
-            "Michał Wiśniewski - CV.pdf (Oczekująca)"
-        );
+        this.applications = FXCollections.observableArrayList();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
