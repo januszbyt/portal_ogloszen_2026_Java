@@ -117,6 +117,8 @@ public class LoginController {
                         App.setRoot("pracodawca"); // Upewnij się, że plik to pracodawca.fxml
                     } else if ("Candidate".equals(role)) {
                         App.setRoot("kandydat");   // Upewnij się, że plik to kandydat.fxml
+                    } else if ("Admin".equals(role)) {
+                        App.setRoot("AdminPanel"); // Wczyta plik AdminPanel.fxml
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Błąd logowania", "Nieznana rola użytkownika w bazie danych.");
                     }
