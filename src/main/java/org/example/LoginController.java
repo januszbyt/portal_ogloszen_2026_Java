@@ -125,7 +125,9 @@ public class LoginController {
                     if ("Employer".equals(role)) {
                         App.setRoot("pracodawca"); // Upewnij się, że plik to pracodawca.fxml
                     } else if ("Candidate".equals(role)) {
-                        App.setRoot("wyszukiwarka");   // Upewnij się, że plik to wyszukiwarka.fxml
+                        App.setRoot("wyszukiwarka"); // Przekierowanie kandydata z serwera
+                    } else if ("Admin".equals(role)) {
+                        App.setRoot("AdminPanel"); // Twoje przekierowanie dla admina
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Błąd logowania", "Nieznana rola użytkownika w bazie danych.");
                     }
