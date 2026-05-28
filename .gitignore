@@ -13,5 +13,6 @@ bin/
 # Local tools/binaries
 tools/
 
-
-
+# Custom ignores
+**/WyszukiwarkaApp.java
+**/PracodawcaApp.java
