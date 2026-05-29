@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.AdminPanel">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
          <children>
@@ -26,7 +26,7 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #e74c3c;" text="Wyloguj" textFill="WHITE">
+                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Wyloguj">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>
@@ -37,11 +37,11 @@
       </HBox>
    </top>
    <center>
-     <TabPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f9f9f9;" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
           <Tab text="Zarządzanie Użytkownikami">
                <content>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="login-box">
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
                      <top>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
                            <children>
@@ -56,15 +56,18 @@
                      <center>
                         <TableView fx:id="tableUsers" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <columns>
-                            <TableColumn fx:id="colUserId" prefWidth="51.19998514652252" text="ID" />
-                            <TableColumn fx:id="colUserRole" prefWidth="173.59999084472656" text="Rola" />
-                              <TableColumn fx:id="colUserEmail" prefWidth="229.60003662109375" text="E-mail" />
-                              <TableColumn fx:id="colUserDate" prefWidth="160.00006103515625" text="Data rejestracji" />
-                              <TableColumn fx:id="colUserStatus" prefWidth="239.20001220703125" text="Status" />
+                            <TableColumn fx:id="colUserId" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="colUserRole" prefWidth="100.0" text="Rola" />
+                            <TableColumn fx:id="colUserEmail" prefWidth="200.0" text="E-mail" />
+                            <TableColumn fx:id="colUserDate" prefWidth="150.0" text="Data rejestracji" />
+                            <TableColumn fx:id="colUserStatus" prefWidth="120.0" text="Status" />
                           </columns>
                            <BorderPane.margin>
                               <Insets left="15.0" right="15.0" />
                            </BorderPane.margin>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                      </center>
                      <bottom>
@@ -72,21 +75,15 @@
                            <children>
                               <Button fx:id="btnBlockUser" mnemonicParsing="false" text="Zablokuj" />
                               <Button fx:id="btnUnblockUser" mnemonicParsing="false" text="Odblokuj" />
-                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" style="-fx-text-fill: white;" text="Usuń konto (Trwale)" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń konto (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
                            </padding>
                         </HBox>
                      </bottom>
-                     <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-            </padding>
-             <BorderPane.margin>
-                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-             </BorderPane.margin>
-          </BorderPane>
-       </content>
+                  </BorderPane>
+               </content>
           </Tab>
           <Tab text="Moderacja Ogłoszeń">
                <content>
@@ -103,37 +100,34 @@
                         </HBox>
                      </top>
                      <center>
-                        <TableView fx:id="tableOffers" prefHeight="335.0" prefWidth="665.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="tableOffers" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                           <columns>
                             <TableColumn fx:id="colOfferId" prefWidth="50.0" text="ID" />
-                            <TableColumn fx:id="colOfferTitle" prefWidth="222.40000534057617" text="Tytuł stanowiska" />
-                              <TableColumn fx:id="colOfferCompany" prefWidth="178.39996337890625" text="Firma" />
-                              <TableColumn fx:id="colOfferDate" prefWidth="191.20004272460938" text="Data dodania" />
-                              <TableColumn fx:id="colOfferStatus" prefWidth="186.4000244140625" text="Status" />
+                            <TableColumn fx:id="colOfferTitle" prefWidth="250.0" text="Tytuł stanowiska" />
+                            <TableColumn fx:id="colOfferCompany" prefWidth="150.0" text="Firma" />
+                            <TableColumn fx:id="colOfferDate" prefWidth="120.0" text="Data dodania" />
+                            <TableColumn fx:id="colOfferStatus" prefWidth="100.0" text="Status" />
                           </columns>
-                          <BorderPane.margin>
+                           <BorderPane.margin>
                               <Insets left="15.0" right="15.0" />
                            </BorderPane.margin>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                      </center>
                      <bottom>
                         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="btnViewOffer" mnemonicParsing="false" text="Podgląd ogłoszenia" />
-                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" style="-fx-text-fill: white;" text="Usuń ofertę (Trwale)" />
+                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń ofertę (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
                            </padding>
                         </HBox>
                      </bottom>
-                     <padding>
-                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                      </padding>
-                      <BorderPane.margin>
-                         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-                      </BorderPane.margin>
-                   </BorderPane>
+                  </BorderPane>
                </content>
           </Tab>
         </tabs>
