@@ -411,6 +411,9 @@ public class WyszukiwarkaController {
         alert.showAndWait();
     }
     
-    
+    @FXML
+    private void handleMojProfil(ActionEvent event) throws IOException {
+        App.setRoot("profil");
+    }
     
 }
