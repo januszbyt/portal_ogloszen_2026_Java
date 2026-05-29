@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -18,34 +19,35 @@ import java.util.Optional;
 
 public class WyszukiwarkaController {
 
+    @FXML private TabPane tabPane;
     @FXML private HBox panelFiltrow;
     @FXML private Label lblWelcome;
 
     // Kontrolki filtrowania i wyszukiwania
     @FXML private TextField txtSearchUser;
-    @FXML private Button btnSearchUser;
     @FXML private TextField txtTitleFilter;
     @FXML private TextField txtSearchUser1;
-    @FXML private Button btnSearchUserHistory;
     @FXML private ComboBox<String> comboCategoryFilter;
     @FXML private TextField txtLocationFilter;
     @FXML private TextField txtMinSalaryFilter;
 
     // Tabela Dostępnych Ofert
     @FXML private TableView<JobOffer> tableUsers;
-    @FXML private TableColumn<JobOffer, String> colUserId; // Tytuł
-    @FXML private TableColumn<JobOffer, String> colUserRole; // Kategoria
+    @FXML private TableColumn<JobOffer, String> colCompany;   // Pracodawca
+    @FXML private TableColumn<JobOffer, String> colUserId;    // Tytuł
+    @FXML private TableColumn<JobOffer, String> colUserRole;  // Kategoria
     @FXML private TableColumn<JobOffer, String> colUserEmail; // Lokalizacja
-    @FXML private TableColumn<JobOffer, String> colUserDate; // Wynagrodzenie
-    @FXML private TableColumn<JobOffer, String> colUserStatus; // Status
+    @FXML private TableColumn<JobOffer, String> colUserDate;  // Wynagrodzenie
+    @FXML private TableColumn<JobOffer, String> colUserStatus;// Status
 
     // Tabela Historii Ogłoszeń
     @FXML private TableView<JobOffer> tableUsers1;
-    @FXML private TableColumn<JobOffer, String> colUserId1; // Tytuł
-    @FXML private TableColumn<JobOffer, String> colUserRole1; // Kategoria
-    @FXML private TableColumn<JobOffer, String> colUserEmail1; // Lokalizacja
-    @FXML private TableColumn<JobOffer, String> colUserDate1; // Wynagrodzenie
-    @FXML private TableColumn<JobOffer, String> colUserStatus1; // Status
+    @FXML private TableColumn<JobOffer, String> colCompany1;   // Pracodawca
+    @FXML private TableColumn<JobOffer, String> colUserId1;
+    @FXML private TableColumn<JobOffer, String> colUserRole1;
+    @FXML private TableColumn<JobOffer, String> colUserEmail1;
+    @FXML private TableColumn<JobOffer, String> colUserDate1;
+    @FXML private TableColumn<JobOffer, String> colUserStatus1;
 
     @FXML private Button btnViewOffer1;
     @FXML private Button btnViewOffer11;
@@ -73,6 +75,7 @@ public class WyszukiwarkaController {
         }
 
         // Bindowanie kolumn tabeli Dostępnych Ofert
+        colCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colUserId.setCellValueFactory(new PropertyValueFactory<>("title"));
         colUserRole.setCellValueFactory(new PropertyValueFactory<>("category"));
         colUserEmail.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -80,6 +83,7 @@ public class WyszukiwarkaController {
         colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Bindowanie kolumn tabeli Historii
+        colCompany1.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colUserId1.setCellValueFactory(new PropertyValueFactory<>("title"));
         colUserRole1.setCellValueFactory(new PropertyValueFactory<>("category"));
         colUserEmail1.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -90,7 +94,7 @@ public class WyszukiwarkaController {
         comboCategoryFilter.setItems(FXCollections.observableArrayList("Wszystkie", "IT / Software", "Budownictwo", "Finanse", "Sprzedaż"));
         comboCategoryFilter.getSelectionModel().selectFirst();
 
-        // Pobranie danych z bazy
+        // Pobranie danych z bazy przy starcie
         loadOffersFromDatabase();
         loadHistoryFromDatabase();
 
@@ -108,9 +112,6 @@ public class WyszukiwarkaController {
 
         // Słuchacz zmian w polu szybkiego wyszukiwania historii
         txtSearchUser1.textProperty().addListener((observable, oldValue, newValue) -> filterHistoryData());
-        if (btnSearchUserHistory != null) {
-            btnSearchUserHistory.setOnAction(event -> filterHistoryData());
-        }
 
         // Słuchacz zmian w polu szybkiego wyszukiwania oraz filtrach
         txtSearchUser.textProperty().addListener((observable, oldValue, newValue) -> filterData());
@@ -119,10 +120,22 @@ public class WyszukiwarkaController {
         txtMinSalaryFilter.textProperty().addListener((observable, oldValue, newValue) -> filterData());
         comboCategoryFilter.valueProperty().addListener((observable, oldValue, newValue) -> filterData());
 
-        // Podpięcie przycisku Szukaj
-        btnSearchUser.setOnAction(event -> filterData());
+        // Automatyczne ładowanie danych przy przełączeniu zakładki
+        tabPane.getSelectionModel().selectedIndexProperty().addListener(
+            (ChangeListener<Number>) (obs, oldIndex, newIndex) -> {
+                if (newIndex.intValue() == 0) {
+                    // Zakładka "Wyszukaj ogłoszenia" — odśwież aktywne oferty z bazy
+                    loadOffersFromDatabase();
+                    filterData();
+                } else if (newIndex.intValue() == 1) {
+                    // Zakładka "Historia ogłoszeń" — odśwież aplikacje kandydata z bazy
+                    loadHistoryFromDatabase();
+                    filterHistoryData();
+                }
+            }
+        );
 
-        // Obsługa kliknięcia przycisku aplikowania (Podgląd ogłoszenia) i wygaszania (disable) przy braku selekcji
+        // Obsługa przycisku aplikowania i wygaszania przy braku selekcji
         btnViewOffer1.disableProperty().bind(tableUsers.getSelectionModel().selectedItemProperty().isNull());
         btnViewOffer11.disableProperty().bind(tableUsers1.getSelectionModel().selectedItemProperty().isNull());
 
@@ -132,30 +145,44 @@ public class WyszukiwarkaController {
 
     private void loadOffersFromDatabase() {
         allOffers.clear();
+
+        UserSession session = UserSession.getInstance();
+        int candidateId = session != null ? session.getUserId() : -1;
+
+        // LEFT JOIN z Applications dla zalogowanego kandydata — pokazuje jego status aplikacji
+        // lub "Nie aplikowano" jeśli nie wysłał jeszcze podania na daną ofertę
         String query = "SELECT j.OfferID as id, j.Title, COALESCE(c.CategoryName, 'Inne') as CategoryName, j.Location, " +
-                       "j.SalaryMIN, j.SalaryMAX, " +
-                       "j.Description, COALESCE(os.StatusName, 'Aktywna') as StatusName " +
+                       "j.SalaryMIN, j.SalaryMAX, j.Description, " +
+                       "COALESCE(e.CompanyName, 'Brak danych') as CompanyName, " +
+                       "COALESCE(aps.StatusName, 'Nie aplikowano') as CandidateStatus " +
                        "FROM JobOffers j " +
                        "LEFT JOIN Categories c ON j.CategoryID = c.CategoryID " +
                        "LEFT JOIN OfferStatuses os ON j.OfferStatusID = os.OfferStatusID " +
+                       "LEFT JOIN Employers e ON j.EmployerID = e.EmployerID " +
+                       "LEFT JOIN Applications a ON j.OfferID = a.OfferID AND a.CandidateID = ? " +
+                       "LEFT JOIN ApplicationStatuses aps ON a.StatusID = aps.StatusID " +
                        "WHERE COALESCE(os.StatusName, 'Aktywna') = 'Aktywna'";
 
         System.out.println("Rozpoczynam pobieranie ofert z bazy danych dla wyszukiwarki...");
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            while (rs.next()) {
-                JobOffer offer = new JobOffer(
-                    rs.getInt("id"),
-                    rs.getString("Title"),
-                    rs.getString("CategoryName"),
-                    rs.getString("Location"),
-                    rs.getBigDecimal("SalaryMIN"),
-                    rs.getBigDecimal("SalaryMAX"),
-                    rs.getString("Description")
-                );
-                allOffers.add(offer);
+            pstmt.setInt(1, candidateId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    JobOffer offer = new JobOffer(
+                        rs.getInt("id"),
+                        rs.getString("Title"),
+                        rs.getString("CategoryName"),
+                        rs.getString("Location"),
+                        rs.getBigDecimal("SalaryMIN"),
+                        rs.getBigDecimal("SalaryMAX"),
+                        rs.getString("Description")
+                    );
+                    offer.setCompanyName(rs.getString("CompanyName"));
+                    offer.setStatus(rs.getString("CandidateStatus"));
+                    allOffers.add(offer);
+                }
             }
             System.out.println("Pomyślnie załadowano " + allOffers.size() + " aktywnych ofert z bazy danych do wyszukiwarki!");
         } catch (SQLException e) {
@@ -164,23 +191,26 @@ public class WyszukiwarkaController {
         }
     }
 
+
     private void loadHistoryFromDatabase() {
         myApplications.clear();
         UserSession session = UserSession.getInstance();
         int loggedInCandidateId = session != null ? session.getUserId() : 1;
 
         String query = "SELECT j.OfferID as id, j.Title, COALESCE(c.CategoryName, 'Inne') as CategoryName, j.Location, " +
-                       "j.SalaryMIN, j.SalaryMAX, " +
-                       "j.Description, COALESCE(aps.StatusName, 'Przesłano') as app_status " +
+                       "j.SalaryMIN, j.SalaryMAX, j.Description, " +
+                       "COALESCE(aps.StatusName, 'Przesłano') as app_status, " +
+                       "COALESCE(e.CompanyName, 'Brak danych') as CompanyName " +
                        "FROM Applications a " +
                        "JOIN JobOffers j ON a.OfferID = j.OfferID " +
                        "LEFT JOIN Categories c ON j.CategoryID = c.CategoryID " +
                        "LEFT JOIN ApplicationStatuses aps ON a.StatusID = aps.StatusID " +
+                       "LEFT JOIN Employers e ON j.EmployerID = e.EmployerID " +
                        "WHERE a.CandidateID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            
+
             pstmt.setInt(1, loggedInCandidateId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -194,6 +224,7 @@ public class WyszukiwarkaController {
                         rs.getString("Description")
                     );
                     offer.setStatus(rs.getString("app_status"));
+                    offer.setCompanyName(rs.getString("CompanyName"));
                     myApplications.add(offer);
                 }
             }
@@ -225,25 +256,28 @@ public class WyszukiwarkaController {
                 return false;
             }
             // Filtr: Minimalne wynagrodzenie
+            // Oferta jest widoczna jeśli jej maksymalne wynagrodzenie >= podanego minimum
+            // Dzięki temu oferta 9000–11000 pojawi się przy filtrze "10000", bo 11000 >= 10000
             String minSalText = txtMinSalaryFilter.getText() == null ? "" : txtMinSalaryFilter.getText().trim();
             if (!minSalText.isEmpty()) {
                 try {
                     double minSalValue = Double.parseDouble(minSalText.replace(',', '.'));
-                    String salaryRange = offer.getSalaryRange();
-                    if (salaryRange != null) {
-                        String firstPart = salaryRange.split(" - ")[0].replace(',', '.').replaceAll("[^0-9.]", "");
-                        if (!firstPart.isEmpty()) {
-                            double actualMin = Double.parseDouble(firstPart);
-                            if (actualMin < minSalValue) {
-                                return false;
-                            }
+                    if (offer.getSalaryMax() != null) {
+                        // Zakres oferty nie dociera do podanej kwoty — ukryj
+                        if (offer.getSalaryMax().doubleValue() < minSalValue) {
+                            return false;
+                        }
+                    } else if (offer.getSalaryMin() != null) {
+                        // Brak salaryMax — sprawdź przynajmniej salaryMin
+                        if (offer.getSalaryMin().doubleValue() < minSalValue) {
+                            return false;
                         }
                     }
                 } catch (NumberFormatException e) {
                     // Ignorujemy błędy parsowania
                 }
             }
-            return true; 
+            return true;
         });
     }
 
@@ -276,7 +310,7 @@ public class WyszukiwarkaController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
-        
+
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
                                "Opis oferty:\n" + selectedOffer.getDescription() + "\n\n";
@@ -310,7 +344,7 @@ public class WyszukiwarkaController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
-        
+
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
                                "Opis oferty:\n" + selectedOffer.getDescription() + "\n\n" +
@@ -324,12 +358,12 @@ public class WyszukiwarkaController {
         UserSession session = UserSession.getInstance();
         int loggedInCandidateId = session != null ? session.getUserId() : 1;
 
-        // Domyślnie nowa aplikacja ma status 'Oczekująca' (ID = 1 w bazie danych dla StatusName = 'Oczekująca')
+        // Domyślnie nowa aplikacja ma status 'Oczekująca' (ID = 1 w bazie danych)
         String insertQuery = "INSERT INTO Applications (OfferID, CandidateID, StatusID) VALUES (?, ?, 1)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
-            
+
             pstmt.setInt(1, offer.getId());
             pstmt.setInt(2, loggedInCandidateId);
             pstmt.executeUpdate();
@@ -342,22 +376,19 @@ public class WyszukiwarkaController {
         }
     }
 
-    // Twoja metoda podpięta pod przycisk "Filtry"
+    // Metoda podpięta pod przycisk "Filtry"
     @FXML
     private void obslugaPrzyciskuFiltry() {
-        boolean pokazywac = !panelFiltrow.isVisible(); 
-        
+        boolean pokazywac = !panelFiltrow.isVisible();
+
         panelFiltrow.setVisible(pokazywac);
 
         if (pokazywac) {
-            // Pokazuje filtry i przywraca rozmiar ze Scene Buildera
-            panelFiltrow.setPrefHeight(HBox.USE_COMPUTED_SIZE); 
+            panelFiltrow.setPrefHeight(HBox.USE_COMPUTED_SIZE);
             panelFiltrow.setMinHeight(HBox.USE_COMPUTED_SIZE);
         } else {
-            // Chowa filtry i zwija przestrzeń do zera
             panelFiltrow.setPrefHeight(0);
             panelFiltrow.setMinHeight(0);
-            // Wyczyszczenie filtrów po schowaniu panelu
             txtTitleFilter.clear();
             comboCategoryFilter.getSelectionModel().selectFirst();
             txtLocationFilter.clear();
@@ -370,7 +401,7 @@ public class WyszukiwarkaController {
     private void handleLogout(ActionEvent event) throws IOException {
         // Czyszczenie sesji użytkownika
         UserSession.clear();
-        
+
         // Przekierowanie do widoku logowania
         App.setRoot("login");
     }
@@ -381,26 +412,27 @@ public class WyszukiwarkaController {
             if (searchKeyword.isEmpty()) {
                 return true;
             }
-            
-            // Wyszukiwanie wszystkiego poza wynagrodzeniem
-            if (offer.getTitle() != null && offer.getTitle().toLowerCase().contains(searchKeyword)) {
-                return true;
-            }
-            if (offer.getCategory() != null && offer.getCategory().toLowerCase().contains(searchKeyword)) {
-                return true;
-            }
-            if (offer.getLocation() != null && offer.getLocation().toLowerCase().contains(searchKeyword)) {
-                return true;
-            }
-            if (offer.getDescription() != null && offer.getDescription().toLowerCase().contains(searchKeyword)) {
-                return true;
-            }
-            if (offer.getStatus() != null && offer.getStatus().toLowerCase().contains(searchKeyword)) {
-                return true;
-            }
-            
+
+            if (offer.getTitle() != null && offer.getTitle().toLowerCase().contains(searchKeyword)) return true;
+            if (offer.getCategory() != null && offer.getCategory().toLowerCase().contains(searchKeyword)) return true;
+            if (offer.getLocation() != null && offer.getLocation().toLowerCase().contains(searchKeyword)) return true;
+            if (offer.getDescription() != null && offer.getDescription().toLowerCase().contains(searchKeyword)) return true;
+            if (offer.getStatus() != null && offer.getStatus().toLowerCase().contains(searchKeyword)) return true;
+
             return false;
         });
+    }
+
+    @FXML
+    private void handleRefreshOffers(ActionEvent event) {
+        loadOffersFromDatabase();
+        filterData();
+    }
+
+    @FXML
+    private void handleRefreshHistory(ActionEvent event) {
+        loadHistoryFromDatabase();
+        filterHistoryData();
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
@@ -410,10 +442,9 @@ public class WyszukiwarkaController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-    
+
     @FXML
     private void handleMojProfil(ActionEvent event) throws IOException {
         App.setRoot("profil");
     }
-    
 }

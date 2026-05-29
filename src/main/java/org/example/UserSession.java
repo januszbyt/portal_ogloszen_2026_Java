@@ -16,9 +16,8 @@ public class UserSession {
     }
 
     public static UserSession init(int userId, String email, String role, String firstName) {
-        if (instance == null) {
-            instance = new UserSession(userId, email, role, firstName);
-        }
+        // Zawsze tworzymy nową sesję — nigdy nie zwracamy starej instancji
+        instance = new UserSession(userId, email, role, firstName);
         return instance;
     }
 

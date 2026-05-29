@@ -229,6 +229,7 @@ public class AdminPanelController {
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
+            UserSession.clear(); // Czyścimy sesję przed powrotem do logowania
             App.setRoot("login");
         } catch (IOException e) {
             e.printStackTrace();
@@ -240,15 +241,18 @@ public class AdminPanelController {
     private void loadUsersData() {
         usersList.clear();
         String searchPhrase = txtSearchUser.getText() != null ? txtSearchUser.getText().trim() : "";
-        
-        String sql = "SELECT UserID, Role, Email, IsBlocked, CreatedAt FROM Users WHERE Email LIKE ? OR Role LIKE ?";
 
+        // Próba z kolumną CreatedAt; jeśli jej nie ma w bazie — fallback bez niej
+        String sql = "SELECT UserID, Role, Email, IsBlocked, CreatedAt FROM Users WHERE Email LIKE ? OR Role LIKE ?";
+        String sqlFallback = "SELECT UserID, Role, Email, IsBlocked FROM Users WHERE Email LIKE ? OR Role LIKE ?";
+
+        boolean useFallback = false;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
             pstmt.setString(1, "%" + searchPhrase + "%");
             pstmt.setString(2, "%" + searchPhrase + "%");
-            
+
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("UserID");
@@ -256,19 +260,45 @@ public class AdminPanelController {
                 String email = rs.getString("Email");
                 boolean isBlocked = rs.getBoolean("IsBlocked");
                 String status = isBlocked ? "Zablokowany" : "Aktywny";
-                
                 String date = rs.getString("CreatedAt");
-                if (date == null) {
-                    date = "Brak daty"; 
-                }
-
+                if (date == null) date = "Brak daty";
                 usersList.add(new AdminUser(id, role, email, date, status));
             }
             tableUsers.setItems(usersList);
-            
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się pobrać listy użytkowników z bazy.");
+            // Jeśli błąd to brak kolumny CreatedAt — próbujemy bez niej
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("createdat")) {
+                useFallback = true;
+            } else {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się pobrać listy użytkowników z bazy.\n" + e.getMessage());
+                return;
+            }
+        }
+
+        if (useFallback) {
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sqlFallback)) {
+
+                pstmt.setString(1, "%" + searchPhrase + "%");
+                pstmt.setString(2, "%" + searchPhrase + "%");
+
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("UserID");
+                    String role = rs.getString("Role");
+                    String email = rs.getString("Email");
+                    boolean isBlocked = rs.getBoolean("IsBlocked");
+                    String status = isBlocked ? "Zablokowany" : "Aktywny";
+                    usersList.add(new AdminUser(id, role, email, "Brak daty", status));
+                }
+                tableUsers.setItems(usersList);
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się pobrać listy użytkowników z bazy.\n" + ex.getMessage());
+            }
         }
     }
 

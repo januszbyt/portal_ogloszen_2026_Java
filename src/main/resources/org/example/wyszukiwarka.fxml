@@ -58,20 +58,21 @@
       </HBox>
    </top>
    <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
           <Tab text="Wyszukaj ogłoszenia">
                <content>
                   <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                      <center>
                         <TableView fx:id="tableUsers" minHeight="150.0" minWidth="300.0" BorderPane.alignment="CENTER">
-                          <columns>
-                            <TableColumn fx:id="colUserId" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Tytuł" />
-                            <TableColumn fx:id="colUserRole" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Kategoria" />
-                              <TableColumn fx:id="colUserEmail" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Lokalizacja" />
-                              <TableColumn fx:id="colUserDate" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Wynagrodzenie" />
-                              <TableColumn fx:id="colUserStatus" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Status" />
-                          </columns>
+                           <columns>
+                             <TableColumn fx:id="colCompany" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="120.0" reorderable="false" text="Pracodawca" />
+                             <TableColumn fx:id="colUserId" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Tytuł" />
+                             <TableColumn fx:id="colUserRole" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Kategoria" />
+                               <TableColumn fx:id="colUserEmail" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Lokalizacja" />
+                               <TableColumn fx:id="colUserDate" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Wynagrodzenie" />
+                               <TableColumn fx:id="colUserStatus" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" reorderable="false" text="Status" />
+                           </columns>
                            <BorderPane.margin>
                               <Insets left="15.0" right="15.0" />
                            </BorderPane.margin>
@@ -96,7 +97,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="15.0">
                                  <children>
                                     <TextField fx:id="txtSearchUser" minWidth="100.0" prefWidth="300.0" promptText="Szukaj pracy (fraza)..." />
-                                    <Button fx:id="btnSearchUser" minWidth="50.0" mnemonicParsing="false" prefWidth="80.0" style="-fx-cursor: hand; -fx-body-color: #52FFDE; -fx-inner-border: #A3FFED;" text="Szukaj" />
+                                    <Button fx:id="btnRefreshOffers" minWidth="50.0" mnemonicParsing="false" onAction="#handleRefreshOffers" prefWidth="80.0" style="-fx-cursor: hand; -fx-body-color: #52FFDE; -fx-inner-border: #A3FFED;" text="Odśwież" />
                                     <Button fx:id="btnSearchUser1" minWidth="50.0" mnemonicParsing="false" onAction="#obslugaPrzyciskuFiltry" prefWidth="80.0" style="-fx-cursor: hand;" text="Filtry" />
                                  </children>
                                  <padding>
@@ -135,6 +136,7 @@
                      <center>
                         <TableView fx:id="tableUsers1" minHeight="150.0" minWidth="300.0" BorderPane.alignment="CENTER">
                            <columns>
+                              <TableColumn fx:id="colCompany1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="120.0" reorderable="false" text="Pracodawca" />
                               <TableColumn fx:id="colUserId1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Stanowisko" />
                               <TableColumn fx:id="colUserRole1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Branża" />
                               <TableColumn fx:id="colUserEmail1" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="70.0" reorderable="false" text="Lokalizacja" />
@@ -165,7 +167,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="15.0">
                                  <children>
                                     <TextField fx:id="txtSearchUser1" minWidth="100.0" prefWidth="300.0" promptText="Szukaj pracy (fraza)..." />
-                                    <Button fx:id="btnSearchUserHistory" minWidth="50.0" mnemonicParsing="false" prefWidth="80.0" text="Szukaj" />
+                                    <Button fx:id="btnRefreshHistory" minWidth="50.0" mnemonicParsing="false" onAction="#handleRefreshHistory" prefWidth="80.0" style="-fx-cursor: hand;" text="Odśwież" />
                                  </children>
                                  <padding>
                                     <Insets left="15.0" right="15.0" />

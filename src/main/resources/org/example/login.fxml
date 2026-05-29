@@ -37,7 +37,7 @@
 
             <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
                <children>
-                  <Button fx:id="loginButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
+                  <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
                   <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
                   <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
                </children>

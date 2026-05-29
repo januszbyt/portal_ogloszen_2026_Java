@@ -11,6 +11,7 @@ public class JobOffer {
     private BigDecimal salaryMax; 
     private String description;
     private String status;
+    private String companyName;
 
 
     public JobOffer(int id, String title, String category, String location, BigDecimal salaryMin, BigDecimal salaryMax, String description) {
@@ -53,4 +54,7 @@ public class JobOffer {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 }

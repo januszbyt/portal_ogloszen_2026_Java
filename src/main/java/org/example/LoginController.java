@@ -74,6 +74,9 @@ public class LoginController {
 
     @FXML
     private void handleLogin(ActionEvent event) {
+        // Zawsze czyścimy poprzednią sesję przed nowym logowaniem
+        UserSession.clear();
+
         String email = emailField.getText() != null ? emailField.getText().trim() : "";
         String password = passwordField.getText() != null ? passwordField.getText() : "";
         
@@ -115,7 +118,14 @@ public class LoginController {
                     
                     int userId = rs.getInt("UserID");
                     String role = rs.getString("Role");
-                    String name = "Employer".equals(role) ? rs.getString("CompanyName") : rs.getString("FirstName");
+                    String name;
+                    if ("Employer".equals(role)) {
+                        name = rs.getString("CompanyName");
+                    } else if ("Admin".equals(role)) {
+                        name = "Administrator";
+                    } else {
+                        name = rs.getString("FirstName");
+                    }
                     System.out.println("Zalogowano pomyślnie. Rola: " + role + ", Nazwa: " + name);
                     
                     // Inicjalizacja sesji użytkownika (przekazujemy imię/nazwę firmy)

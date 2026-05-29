@@ -21,6 +21,8 @@ public class App extends Application {
         scene = new Scene(loadFXML("login"), 800, 600);
         stage.setScene(scene);
         stage.setTitle("System Ofert Pracy");
+        stage.setMinWidth(600);
+        stage.setMinHeight(400);
         
         // Ta linijka sprawia, że okno otwiera się na cały ekran (maksymalizacja)
         stage.setMaximized(true); 
