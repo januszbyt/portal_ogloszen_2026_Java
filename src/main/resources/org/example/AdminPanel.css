@@ -1,33 +1,61 @@
-/* Główne tło aplikacji - jasnoszare, aby karty się wyróżniały */
-
 .root {
+    /* Będą podmieniane w ciemnym motywie */
     -bg-color: #f4f7f6;
+    -panel-bg: white;
+    -text-color: #222222;
+    -accent-color: #2c3e50;
+    -border-color: #cccccc;
+    -border-light: #e0e0e0;
+    -row-hover: #f7f9fa;
+
+    /* Zmienna dla górnego paska */
+    -header-bg: #2c3e50;
+
+    /* Globalne usunięcie domyślnej niebieskiej ramki JavaFX przy klikaniu */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+
     -fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
     -fx-background-color: -bg-color;
 }
-/* Górny pasek zostawiamy ciemny dla kontrastu, jak nagłówek formularza */
-.header-bar {
-    -fx-background-color: #2c3e50;
-    -fx-padding: 10px 20px;
-}
-/* --- STYLE PRZYCISKÓW --- */
-/* Wszystkie przyciski robimy płaskie, zaokrąglone i kolorowe */
 
+/* Tryb Ciemny */
+.dark-mode {
+    -bg-color: #121212;
+    -panel-bg: #1e1e1e;
+    -text-color: #ffffff;
+    -accent-color: #4ea6e8;
+    -border-color: #444444; 
+    -border-light: #333333; /* Słabo widoczny kolor dla linii w ciemnym motywie */
+    -row-hover: #2a2a2a;
+
+    /* Górny pasek teraz lekko różni się od tła */
+    -header-bg: #1e1e1e; 
+}
+
+/* Górny pasek teraz czyta kolor ze zmiennej */
+.header-bar {
+    -fx-background-color: -header-bg;
+    -fx-padding: 10px 20px;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: -border-color;
+}
+
+/* Style przyciskow */
 .button {
-    -fx-background-color: #2c3e50; /* Ciemnoniebieski z ekranu logowania */
+    -fx-background-color: -accent-color; 
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 6px;
     -fx-padding: 10px 22px;
     -fx-cursor: hand;
-    -fx-effect: none; /* Wymuszamy usunięcie domyślnych cieni JavaFX */
+    -fx-effect: none; 
     -fx-border-width: 0;
 }
 
 .button:hover {
     -fx-opacity: 0.85;
 }
-/* Czerwone przyciski (Wyloguj) - używamy czerwonego z logowania */
 
 .button-danger {
     -fx-background-color: #e74c3c;
@@ -36,12 +64,29 @@
 .button-danger:hover {
     -fx-background-color: #c0392b;
 }
-/* STYLE INPUTÓW (POLA WYSZUKIWANIA) */
 
-.tab-pane .text-field {
+/* Styl dla przycisku zmiany motywu inline */
+.theme-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-padding: 5px 15px;
+    -fx-cursor: hand;
+}
+
+.theme-button:hover {
     -fx-background-color: white;
-    -fx-text-fill: -text-color;
-    -fx-border-color: #cccccc;
+    -fx-text-fill: -header-bg;
+}
+
+
+/* Style dla wyszukywania */
+.tab-pane .text-field {
+    -fx-background-color: -panel-bg; 
+    -fx-text-fill: -text-color; 
+    -fx-border-color: -border-color; 
     -fx-border-width: 1px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
@@ -49,13 +94,12 @@
     -fx-effect: none;
 }
 .tab-pane .text-field:focused {
-    -fx-border-color: #2c3e50;
+    -fx-border-color: -accent-color; 
     -fx-border-width: 2px;
     -fx-background-insets: 0;
 }
 
-/* MINIMALISTYCZNE ZAKŁADKI (TABS)  */
-
+/* Minimalystyczne zakladki  */
 .tab-pane .tab-header-area .tab-header-background {
     -fx-background-color: transparent;
 }
@@ -73,86 +117,134 @@
     -fx-font-size: 14px;
 }
 
-/* Aktywna zakładka jest podkreślona, jak w Material Design */
 .tab-pane .tab:selected {
-    -fx-border-color: transparent transparent #2c3e50 transparent;
+    -fx-border-color: transparent transparent -accent-color transparent; 
     -fx-border-width: 0 0 3px 0;
 }
 
 .tab-pane .tab:selected .tab-label {
-    -fx-text-fill: #2c3e50;
+    -fx-text-fill: -accent-color;
 }
 
-
-/* Bierzemy BorderPane wewnątrz każdego Tab i stylizujemy go na login-box */
-
+/* Karty */
 .tab-content-area > .tab-pane .tab-pane-content > BorderPane,
 .tab-pane .border-pane-inside-tab {
-    -fx-background-color: white;
+    -fx-background-color: -panel-bg; 
     -fx-background-radius: 12px;
     -fx-padding: 20px;
 
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 6);
 
-    /* Gruba linia akcentu na górze, jak w logowaniu */
-
-    -fx-border-color: #2c3e50;
+    -fx-border-color: -accent-color; 
     -fx-border-width: 6px 0 0 0; 
     -fx-border-radius: 12px;
     
-    /* Marginesy, aby karta "unosiła się" w powietrzu */
     -fx-margin: 20px;
 }
-/*NOWOCZESNA TABELA (TableView) */
 
+/* Tabele */
 .table-view {
-    -fx-background-color: white;
-    -fx-border-width: 0;
+    -fx-background-color: -panel-bg; 
+    -fx-border-color: -border-color; 
+    -fx-border-width: 1px;           
+    /* To wyzerowanie usuwa białą linię po lewej stronie tabeli */
+    -fx-background-insets: 0; 
     -fx-effect: none;
 }
 
-/* Czyste, płaskie nagłówki */
-.table-view .column-header-background {
-    -fx-background-color: #fcfcfc;
-    -fx-border-width: 0 0 1px 0;
-    -fx-border-color: #e0e0e0;
+.table-view:focused {
+    -fx-background-insets: 0;
+    -fx-border-color: -border-color;
 }
 
+/* Nagłówki tabeli - TŁO CAŁEGO PASKA */
+.table-view .column-header-background {
+    -fx-background-color: -bg-color; 
+    -fx-border-color: -border-color;
+    -fx-border-width: 0 0 1px 0; 
+    -fx-background-insets: 0;
+}
+
+/* Nagłówki tabeli - POJEDYNCZE KOMÓRKI (ID, Rola, E-mail, itd.) */
 .table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 1px 0 0;
+    -fx-border-color: -border-light; /* Użycie delikatniejszego koloru */
+    -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
     -fx-padding: 12px 0;
     -fx-size: 50px;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #2c3e50;
+    -fx-text-fill: -accent-color; 
     -fx-font-weight: bold;
 }
 
-/* Gładkie, wysokie wiersze */
+/* Słabo widoczne pionowe linie pomiędzy komórkami z danymi */
+.table-view .table-cell {
+    -fx-border-color: -border-light; /* Użycie delikatniejszego koloru */
+    -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
+    -fx-padding: 0 10px;
+}
+
+/* Gladkie, wysokie wiersze */
 .table-row-cell {
-    -fx-background-color: white;
-    -fx-border-color: transparent transparent #f5f5f5 transparent;
+    -fx-background-color: -panel-bg; 
+    -fx-border-color: transparent transparent -border-color transparent; 
     -fx-border-width: 0 0 1px 0;
     -fx-cell-size: 45px;
 }
 
 .table-row-cell:hover {
-    -fx-background-color: #f7f9fa;
+    -fx-background-color: -row-hover; 
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #2c3e50;
+    -fx-background-color: -accent-color; 
 }
 
 .table-row-cell:selected .text {
     -fx-fill: white;
 }
 
+.table-row-cell .text {
+    -fx-fill: -text-color; 
+}
 
-.table-view:focused {
-    -fx-background-insets: 0;
+/* Róg tabeli i pusty obszar za nagłówkami */
+.table-view .corner,
+.table-view .filler,
+.table-view .column-header-background .show-hide-columns-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
 
+/* Tło całego paska przewijania (usuwa białą obwódkę) */
+.table-view .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Ścieżka paska (track) */
+.table-view .scroll-bar .track,
+.table-view .scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* "Łapacz" paska (ten suwak, którym ruszamy) */
+.table-view .scroll-bar .thumb {
+    -fx-background-color: -border-color;
+    -fx-background-radius: 4px;
+}
+
+/* Ukrycie strzałek góra/dół i ich tła, by nie generowały białych kwadratów */
+.table-view .scroll-bar .increment-button,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .scroll-bar .increment-arrow,
+.table-view .scroll-bar .decrement-arrow {
+    -fx-background-color: -border-color;
 }

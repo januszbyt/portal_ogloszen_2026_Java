@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane; // Dodano dla obslugi motywu
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -43,6 +44,8 @@ public class AdminPanelController {
     @FXML private Button btnDeleteOffer;
 
     @FXML private Button btnLogout;
+    
+    @FXML private Button btnToggleTheme; // DODANO
 
     private ObservableList<AdminUser> usersList = FXCollections.observableArrayList();
     private ObservableList<AdminOffer> offersList = FXCollections.observableArrayList();
@@ -65,6 +68,21 @@ public class AdminPanelController {
         loadOffersData();
     }
 
+
+    // Obsługa zmiany motywu
+    @FXML
+    private void handleToggleTheme(ActionEvent event) {
+        BorderPane root = (BorderPane) btnToggleTheme.getScene().getRoot();
+        if (root.getStyleClass().contains("dark-mode")) {
+            // Przełączenie na jasny motyw
+            root.getStyleClass().remove("dark-mode");
+            btnToggleTheme.setText("🌙 Ciemny Motyw");
+        } else {
+            // Przełączenie na ciemny motyw
+            root.getStyleClass().add("dark-mode");
+            btnToggleTheme.setText("☀ Jasny Motyw");
+        }
+    }
 
 
     @FXML
