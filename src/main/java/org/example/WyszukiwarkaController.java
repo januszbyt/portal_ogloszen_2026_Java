@@ -133,7 +133,7 @@ public class WyszukiwarkaController {
     private void loadOffersFromDatabase() {
         allOffers.clear();
         String query = "SELECT j.OfferID as id, j.Title, COALESCE(c.CategoryName, 'Inne') as CategoryName, j.Location, " +
-                       "CONCAT(j.SalaryMIN, ' - ', j.SalaryMAX, ' PLN') as salary_range, " +
+                       "j.SalaryMIN, j.SalaryMAX, " +
                        "j.Description, COALESCE(os.StatusName, 'Aktywna') as StatusName " +
                        "FROM JobOffers j " +
                        "LEFT JOIN Categories c ON j.CategoryID = c.CategoryID " +
@@ -151,7 +151,8 @@ public class WyszukiwarkaController {
                     rs.getString("Title"),
                     rs.getString("CategoryName"),
                     rs.getString("Location"),
-                    rs.getString("salary_range"),
+                    rs.getBigDecimal("SalaryMIN"),
+                    rs.getBigDecimal("SalaryMAX"),
                     rs.getString("Description")
                 );
                 allOffers.add(offer);
@@ -169,7 +170,7 @@ public class WyszukiwarkaController {
         int loggedInCandidateId = session != null ? session.getUserId() : 1;
 
         String query = "SELECT j.OfferID as id, j.Title, COALESCE(c.CategoryName, 'Inne') as CategoryName, j.Location, " +
-                       "CONCAT(j.SalaryMIN, ' - ', j.SalaryMAX, ' PLN') as salary_range, " +
+                       "j.SalaryMIN, j.SalaryMAX, " +
                        "j.Description, COALESCE(aps.StatusName, 'Przesłano') as app_status " +
                        "FROM Applications a " +
                        "JOIN JobOffers j ON a.OfferID = j.OfferID " +
@@ -188,7 +189,8 @@ public class WyszukiwarkaController {
                         rs.getString("Title"),
                         rs.getString("CategoryName"),
                         rs.getString("Location"),
-                        rs.getString("salary_range"),
+                        rs.getBigDecimal("SalaryMIN"),
+                        rs.getBigDecimal("SalaryMAX"),
                         rs.getString("Description")
                     );
                     offer.setStatus(rs.getString("app_status"));
