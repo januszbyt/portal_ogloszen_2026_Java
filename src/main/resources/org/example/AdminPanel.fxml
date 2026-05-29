@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.AdminPanel">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.AdminPanelController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
          <children>
@@ -26,7 +26,7 @@
             </Label>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Wyloguj">
+                  <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Wyloguj">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>
@@ -45,8 +45,8 @@
                      <top>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="txtSearchUser" prefWidth="300.0" promptText="Szukaj użytkownika (e-mail, rola)..." />
-                              <Button fx:id="btnSearchUser" mnemonicParsing="false" text="Szukaj" />
+                              <TextField fx:id="txtSearchUser" onAction="#handleSearchUser" prefWidth="300.0" promptText="Szukaj użytkownika (e-mail, rola)..." />
+                              <Button fx:id="btnSearchUser" mnemonicParsing="false" onAction="#handleSearchUser" text="Szukaj" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
@@ -73,9 +73,9 @@
                      <bottom>
                         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="btnBlockUser" mnemonicParsing="false" text="Zablokuj" />
-                              <Button fx:id="btnUnblockUser" mnemonicParsing="false" text="Odblokuj" />
-                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń konto (Trwale)" />
+                              <Button fx:id="btnBlockUser" mnemonicParsing="false" onAction="#handleBlockUser" text="Zablokuj" />
+                              <Button fx:id="btnUnblockUser" mnemonicParsing="false" onAction="#handleUnblockUser" text="Odblokuj" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń konto (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
@@ -91,8 +91,8 @@
                      <top>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="txtSearchOffer" prefWidth="300.0" promptText="Szukaj ogłoszenia..." />
-                              <Button fx:id="btnSearchOffer" mnemonicParsing="false" text="Szukaj" />
+                              <TextField fx:id="txtSearchOffer" onAction="#handleSearchOffer" prefWidth="300.0" promptText="Szukaj ogłoszenia..." />
+                              <Button fx:id="btnSearchOffer" mnemonicParsing="false" onAction="#handleSearchOffer" text="Szukaj" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
@@ -119,8 +119,8 @@
                      <bottom>
                         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="btnViewOffer" mnemonicParsing="false" text="Podgląd ogłoszenia" />
-                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń ofertę (Trwale)" />
+                              <Button fx:id="btnViewOffer" mnemonicParsing="false" onAction="#handleViewOffer" text="Podgląd ogłoszenia" />
+                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" onAction="#handleDeleteOffer" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń ofertę (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
