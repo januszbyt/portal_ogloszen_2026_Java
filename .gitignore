@@ -16,7 +16,11 @@ tools/
 # Custom ignores
 **/WyszukiwarkaApp.java
 **/PracodawcaApp.java
+**/KandydatApp.java
 Plan aplikacji (1).docx
 README2.md
 demo/
 javafx-run-pracodawca.bat
+**/DbChecker.java
+**/insert_offers.sql
+
