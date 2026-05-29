@@ -59,4 +59,10 @@ public class WyszukiwarkaController {
         // Przekierowanie do widoku logowania
         App.setRoot("login");
     }
+    
+    @FXML
+    private void handleMojProfil(ActionEvent event) throws IOException {
+        App.setRoot("profil");
+    }
+    
 }

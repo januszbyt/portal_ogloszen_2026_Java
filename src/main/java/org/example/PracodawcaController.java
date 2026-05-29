@@ -295,6 +295,11 @@ public class PracodawcaController {
             e.printStackTrace();
         }
     }
+    
+    @FXML
+    private void handleMojProfil(ActionEvent event) throws IOException {
+        App.setRoot("profil");
+    }
 
     @FXML
     private void handleLogout(ActionEvent event) throws IOException {

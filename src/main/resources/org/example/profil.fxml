@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" prefHeight="650.0" prefWidth="700.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ProfilController">
+   <padding>
+      <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
+   </padding>
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="50.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleBack" text="&lt; Wróć" />
+            <Label text="Mój Profil Użytkownika">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+
+      <Separator prefWidth="200.0" />
+
+      <VBox spacing="10.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #cccccc; -fx-border-radius: 8;">
+         <children>
+            <Label text="Dane logowania (Wspólne)">
+               <font><Font name="System Bold" size="14.0" /></font>
+            </Label>
+            <HBox spacing="15.0">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Adres E-mail" />
+                        <TextField fx:id="txtEmail" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="15.0">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Obecne hasło (wymagane przy zmianie)" />
+                        <PasswordField fx:id="txtOldPassword" promptText="Podaj obecne hasło..." />
+                     </children>
+                  </VBox>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Nowe hasło" />
+                        <PasswordField fx:id="txtNewPassword" promptText="Pozostaw puste, by nie zmieniać..." />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+
+      <VBox fx:id="boxCandidate" spacing="10.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #cccccc; -fx-border-radius: 8;">
+         <children>
+            <Label text="Dane Kandydata">
+               <font><Font name="System Bold" size="14.0" /></font>
+            </Label>
+            <HBox spacing="15.0">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Imię" />
+                        <TextField fx:id="txtFirstName" />
+                     </children>
+                  </VBox>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Nazwisko" />
+                        <TextField fx:id="txtLastName" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox>
+               <children>
+                  <Label text="Ścieżka do pliku CV (np. Jan_Kowalski_CV.pdf)" />
+                  <TextField fx:id="txtCvPath" promptText="Wpisz nazwę pliku lub ścieżkę do CV" />
+               </children>
+            </VBox>
+            <HBox spacing="15.0">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Link do LinkedIn (Opcjonalnie)" />
+                        <TextField fx:id="txtLinkedin" promptText="https://linkedin.com/in/..." />
+                     </children>
+                  </VBox>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Link do GitHub (Opcjonalnie)" />
+                        <TextField fx:id="txtGithub" promptText="https://github.com/..." />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+
+      <VBox fx:id="boxEmployer" spacing="10.0" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #cccccc; -fx-border-radius: 8;">
+         <children>
+            <Label text="Dane Firmy (Pracodawca)">
+               <font><Font name="System Bold" size="14.0" /></font>
+            </Label>
+            <HBox spacing="15.0">
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Nazwa firmy" />
+                        <TextField fx:id="txtCompanyName" />
+                     </children>
+                  </VBox>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Numer NIP (10 cyfr)" />
+                        <TextField fx:id="txtNip" promptText="np. 1234563218" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox>
+               <children>
+                  <Label text="Krótki opis firmy" />
+                  <TextArea fx:id="txtDescription" prefHeight="80.0" wrapText="true" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+
+      <Separator prefWidth="200.0" />
+
+      <HBox alignment="CENTER" spacing="40.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleSave" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" text="Zapisz zmiany" />
+            <Button mnemonicParsing="false" onAction="#handleDeleteAccount" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Usuń konto (Trwale)" />
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

@@ -36,7 +36,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btnLogout" mnemonicParsing="false" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000; -fx-cursor: hand;" text="Mój Profil" textFill="WHITE">
+                  <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleMojProfil" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000; -fx-cursor: hand;" text="Mój Profil" textFill="WHITE">
                      <HBox.margin>
                         <Insets right="20.0" />
                      </HBox.margin>

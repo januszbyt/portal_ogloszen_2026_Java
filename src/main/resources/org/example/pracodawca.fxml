@@ -47,9 +47,16 @@
                   <Button mnemonicParsing="false" onAction="#handleSaveEdit" text="Zapisz Edycję" prefWidth="140.0" />
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #d9534f; -fx-text-fill: white;" text="Wyloguj się" prefWidth="298.0">
+
+            <Button mnemonicParsing="false" onAction="#handleMojProfil" style="-fx-background-color: #E0E0E0; -fx-text-fill: #000000; -fx-cursor: hand;" text="Mój Profil" prefWidth="298.0">
                <VBox.margin>
                   <Insets top="20.0" />
+               </VBox.margin>
+            </Button>
+            
+            <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #d9534f; -fx-text-fill: white; -fx-cursor: hand;" text="Wyloguj się" prefWidth="298.0">
+               <VBox.margin>
+                  <Insets top="5.0" />
                </VBox.margin>
             </Button>
          </children>
