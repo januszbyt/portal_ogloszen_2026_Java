@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     
     //  Adres serwera uczelnianego i nazwa bazy TESTBJ
-    private static final String URL = "jdbc:mysql://localhost:3306/TESTBJ"; 
+    private static final String URL = "jdbc:mysql://localhost:3306/TESTBJ?useUnicode=true&characterEncoding=utf8"; 
     
     //  Dane do logowania bazy danych
     private static final String USER = "root"; 
