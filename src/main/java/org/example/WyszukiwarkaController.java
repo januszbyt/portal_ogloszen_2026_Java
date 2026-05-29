@@ -408,4 +408,7 @@ public class WyszukiwarkaController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    
+    
+    
 }
