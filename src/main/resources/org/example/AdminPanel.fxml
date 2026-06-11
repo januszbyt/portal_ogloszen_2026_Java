@@ -39,7 +39,7 @@
       </HBox>
    </top>
    <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="adminTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
           <Tab text="Zarządzanie Użytkownikami">
                <content>
@@ -47,8 +47,8 @@
                      <top>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="txtSearchUser" onAction="#handleSearchUser" prefWidth="300.0" promptText="Szukaj użytkownika (e-mail, rola)..." />
-                              <Button fx:id="btnSearchUser" mnemonicParsing="false" onAction="#handleSearchUser" text="Szukaj" />
+								<TextField fx:id="txtSearchUser" prefWidth="300.0" promptText="Szukaj użytkownika (e-mail, rola)..." />
+								<Button fx:id="btnRefreshUsers" mnemonicParsing="false" onAction="#handleRefreshUsers" text="Odśwież" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
@@ -93,8 +93,8 @@
                      <top>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
                            <children>
-                              <TextField fx:id="txtSearchOffer" onAction="#handleSearchOffer" prefWidth="300.0" promptText="Szukaj ogłoszenia..." />
-                              <Button fx:id="btnSearchOffer" mnemonicParsing="false" onAction="#handleSearchOffer" text="Szukaj" />
+                             <TextField fx:id="txtSearchOffer" prefWidth="300.0" promptText="Szukaj ogłoszenia..." />
+							 <Button fx:id="btnRefreshOffers" mnemonicParsing="false" onAction="#handleRefreshOffers" text="Odśwież" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />

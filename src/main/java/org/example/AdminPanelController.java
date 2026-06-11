@@ -18,8 +18,9 @@ import java.util.Optional;
 
 public class AdminPanelController {
 
+	@FXML private TabPane adminTabPane;
     @FXML private TextField txtSearchUser;
-    @FXML private Button btnSearchUser;
+    @FXML private Button btnRefreshUsers; 
     @FXML private TableView<AdminUser> tableUsers;
     @FXML private TableColumn<AdminUser, Integer> colUserId;
     @FXML private TableColumn<AdminUser, String> colUserRole;
@@ -32,7 +33,7 @@ public class AdminPanelController {
     @FXML private Button btnDeleteUser;
 
     @FXML private TextField txtSearchOffer;
-    @FXML private Button btnSearchOffer;
+    @FXML private Button btnRefreshOffers;
     @FXML private TableView<AdminOffer> tableOffers;
     @FXML private TableColumn<AdminOffer, Integer> colOfferId;
     @FXML private TableColumn<AdminOffer, String> colOfferTitle;
@@ -66,6 +67,20 @@ public class AdminPanelController {
 
         loadUsersData();
         loadOffersData();
+        
+        txtSearchUser.textProperty().addListener((observable, oldValue, newValue) -> loadUsersData());
+        txtSearchOffer.textProperty().addListener((observable, oldValue, newValue) -> loadOffersData());
+
+        // 2. Odświeżanie listy po zmianie zakładki
+        if (adminTabPane != null) {
+            adminTabPane.getSelectionModel().selectedIndexProperty().addListener((obs, oldIndex, newIndex) -> {
+                if (newIndex.intValue() == 0) {
+                    loadUsersData(); // Zakładka Użytkownicy
+                } else if (newIndex.intValue() == 1) {
+                    loadOffersData(); // Zakładka Ogłoszenia
+                }
+            });
+        }
     }
 
 
@@ -86,7 +101,7 @@ public class AdminPanelController {
 
 
     @FXML
-    private void handleSearchUser(ActionEvent event) {
+    private void handleRefreshUsers(ActionEvent event) {
         loadUsersData();
     }
 
@@ -130,7 +145,7 @@ public class AdminPanelController {
     }
 
     @FXML
-    private void handleSearchOffer(ActionEvent event) {
+    private void handleRefreshOffers(ActionEvent event) {
         loadOffersData();
     }
 
