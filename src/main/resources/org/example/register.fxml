@@ -6,58 +6,75 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.RegisterController">
-   <children>
-      <HBox alignment="TOP_RIGHT" maxWidth="-Infinity" prefWidth="400.0">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.RegisterController">
+   
+   <top>
+      <HBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="btnZmianaMotywu" mnemonicParsing="false" onAction="#zmienMotyw" styleClass="theme-button" text="🌙 Ciemny Motyw" />
          </children>
-         <VBox.margin>
-            <Insets bottom="10.0" />
-         </VBox.margin>
+         <BorderPane.margin>
+            <Insets right="20.0" top="20.0" />
+         </BorderPane.margin>
       </HBox>
+   </top>
 
-      <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="15.0" styleClass="login-box">
-         <children>
-            
-            <Label styleClass="title-label" text="Rejestracja" />
-            
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="350.0" spacing="12.0">
+   <center>
+      <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" BorderPane.alignment="CENTER">
+         <content>
+            <VBox alignment="CENTER" spacing="15.0">
                <children>
-                  <TextField fx:id="firstNameField" maxWidth="1.7976931348623157E308" promptText="Imię" />
-                  <TextField fx:id="lastNameField" maxWidth="1.7976931348623157E308" promptText="Nazwisko" />
-                  <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
-                  <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
-                  <PasswordField fx:id="confirmPasswordField" maxWidth="1.7976931348623157E308" promptText="Powtórz hasło" />
+                  <VBox alignment="CENTER" maxWidth="400.0" spacing="15.0" styleClass="login-box">
+                     <children>
+                        
+                        <Label styleClass="title-label" text="Rejestracja" />
+                        
+                        <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="12.0">
+                           <children>
+                              <TextField fx:id="firstNameField" maxWidth="1.7976931348623157E308" promptText="Imię" />
+                              <TextField fx:id="lastNameField" maxWidth="1.7976931348623157E308" promptText="Nazwisko" />
+                              <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
+                              <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
+                              <PasswordField fx:id="confirmPasswordField" maxWidth="1.7976931348623157E308" promptText="Powtórz hasło" />
+                           </children>
+                        </VBox>
+
+                        <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="30.0">
+                           <children>
+                              <RadioButton fx:id="userRadio" mnemonicParsing="false" selected="true" text="Kandydat">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="roleGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="businessRadio" mnemonicParsing="false" text="Pracodawca" toggleGroup="$roleGroup" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+ 
+                        <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="15.0">
+                           <children>
+                              <Button fx:id="registerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" text="Zarejestruj się" />
+                              <Hyperlink fx:id="loginLink" onAction="#switchToLogin" text="Masz już konto? Zaloguj się" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
                </children>
+               <padding>
+                  <Insets bottom="40.0" top="20.0" />
+               </padding>
             </VBox>
-
-            <HBox alignment="CENTER" maxWidth="-Infinity" prefWidth="350.0" spacing="30.0">
-               <children>
-                  <RadioButton fx:id="userRadio" mnemonicParsing="false" selected="true" text="Kandydat">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="roleGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="businessRadio" mnemonicParsing="false" text="Pracodawca" toggleGroup="$roleGroup" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="350.0" spacing="15.0">
-               <children>
-                  <Button fx:id="registerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" text="Zarejestruj się" />
-                  <Hyperlink fx:id="loginLink" onAction="#switchToLogin" text="Masz już konto? Zaloguj się" />
-               </children>
-            </VBox>
-         </children>
-      </VBox>
-   </children>
-</VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   
+</BorderPane>
