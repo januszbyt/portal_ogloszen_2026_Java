@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.image.Image; 
+import javafx.scene.image.ImageView; 
 
 import java.io.IOException;
 import java.util.Optional;
@@ -18,6 +20,9 @@ import java.sql.SQLException;
 import java.security.MessageDigest;
 
 public class LoginController {
+
+    @FXML
+    private ImageView logoImageView; // Dodane pole dla logo
 
     @FXML
     private TextField emailField;
@@ -39,12 +44,16 @@ public class LoginController {
         Pane root = (Pane) scene.getRoot();
 
         if (isDarkMode) {
+            // Włączanie jasnego motywu
             root.getStyleClass().remove("dark-mode");
             btnZmianaMotywu.setText("🌙 Ciemny Motyw");
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/Logo.png"))); // Zmiana na ciemne logo
             isDarkMode = false;
         } else {
+            // Włączanie ciemnego motywu
             root.getStyleClass().add("dark-mode");
             btnZmianaMotywu.setText("☀ Jasny Motyw"); 
+            logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/LogoWhite.png"))); // Zmiana na białe logo
             isDarkMode = true;
         }
     }
@@ -324,5 +333,3 @@ public class LoginController {
         }
     }
 }
-
-//naprawa

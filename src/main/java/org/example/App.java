@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image; // DODANO: Import klasy Image
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -24,6 +25,18 @@ public class App extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(400);
         
+         // Dodanie LogoIcon do naszego programu
+        try {
+            // Ścieżka wskazuje na folder resources/org/example/pictures/
+            Image applicationIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+            stage.getIcons().add(applicationIcon);
+        } catch (NullPointerException e) {
+            System.err.println("Błąd: Nie znaleziono pliku LogoIcon.png w podanej ścieżce.");
+        } catch (Exception e) {
+            System.err.println("Wystąpił błąd podczas ładowania ikony: " + e.getMessage());
+        }
+        
+
         // Ta linijka sprawia, że okno otwiera się na cały ekran (maksymalizacja)
         stage.setMaximized(true); 
         
@@ -43,4 +56,3 @@ public class App extends Application {
         launch();
     }
 }
-//naprawa

@@ -6,44 +6,67 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.LoginController">
-   <children>
-      
-      <HBox alignment="TOP_RIGHT" maxWidth="-Infinity" prefWidth="400.0">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.LoginController">
+
+   <top>
+      <HBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="btnZmianaMotywu" mnemonicParsing="false" onAction="#zmienMotyw" styleClass="theme-button" text="🌙 Ciemny Motyw" />
          </children>
-         <VBox.margin>
-            <Insets bottom="10.0" />
-         </VBox.margin>
+         <BorderPane.margin>
+            <Insets right="20.0" top="20.0" />
+         </BorderPane.margin>
       </HBox>
+   </top>
 
-      <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-box">
+   <center>
+      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="title-label" text="Logowanie" />
             
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
-               <children>
-                  <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
-                  <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
-               </children>
+            <ImageView fx:id="logoImageView" fitHeight="100.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/Logo.png" />
+               </image>
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
-            </VBox>
+            </ImageView>
 
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-box">
                <children>
-                  <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
-                  <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
-                  <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+                  <Label styleClass="title-label" text="Logowanie" />
+                  
+                  <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+                     <children>
+                        <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
+                        <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </VBox>
+
+                  <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+                     <children>
+                        <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
+                        <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
+                        <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+                     </children>
+                  </VBox>
                </children>
             </VBox>
+            
          </children>
+         <BorderPane.margin>
+            <Insets bottom="60.0" />
+         </BorderPane.margin>
       </VBox>
-      
-   </children>
-</VBox>
+   </center>
+
+</BorderPane>
