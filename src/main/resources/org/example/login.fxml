@@ -51,7 +51,7 @@
                               <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
                            </children>
                            <VBox.margin>
-                              <Insets bottom="10.0" />
+                              <Insets bottom="10.0"  />
                            </VBox.margin>
                         </VBox>
 

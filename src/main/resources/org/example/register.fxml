@@ -59,7 +59,7 @@
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
-
+ 
                         <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="15.0">
                            <children>
                               <Button fx:id="registerButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" text="Zarejestruj się" />
