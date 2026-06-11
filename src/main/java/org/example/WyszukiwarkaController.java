@@ -236,9 +236,16 @@ public class WyszukiwarkaController {
     private void filterData() {
         filteredOffers.setPredicate(offer -> {
             // Szybkie wyszukiwanie
-            String searchKeyword = txtSearchUser.getText() == null ? "" : txtSearchUser.getText().toLowerCase();
-            if (!searchKeyword.isEmpty() && !offer.getTitle().toLowerCase().contains(searchKeyword) && !offer.getDescription().toLowerCase().contains(searchKeyword)) {
-                return false;
+            String searchKeyword = txtSearchUser.getText() == null ? "" : txtSearchUser.getText().toLowerCase().trim();
+            if (!searchKeyword.isEmpty()) {
+                boolean matchesTitle = offer.getTitle() != null && offer.getTitle().toLowerCase().contains(searchKeyword);
+                boolean matchesDesc = offer.getDescription() != null && offer.getDescription().toLowerCase().contains(searchKeyword);
+                boolean matchesCompany = offer.getCompanyName() != null && offer.getCompanyName().toLowerCase().contains(searchKeyword);
+                boolean matchesCategory = offer.getCategory() != null && offer.getCategory().toLowerCase().contains(searchKeyword);
+                
+                if (!matchesTitle && !matchesDesc && !matchesCompany && !matchesCategory) {
+                    return false;
+                }
             }
             // Filtr: Tytuł
             String titleFilter = txtTitleFilter.getText() == null ? "" : txtTitleFilter.getText().toLowerCase();

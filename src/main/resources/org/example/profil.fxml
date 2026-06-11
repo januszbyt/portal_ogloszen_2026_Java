@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" prefHeight="650.0" prefWidth="700.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ProfilController">
+<VBox alignment="TOP_CENTER" prefHeight="650.0" prefWidth="700.0" spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.ProfilController">
    <padding>
       <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
    </padding>
@@ -87,10 +87,15 @@
                   </VBox>
                </children>
             </HBox>
-            <VBox>
+            <VBox spacing="5.0">
                <children>
-                  <Label text="Ścieżka do pliku CV (np. Jan_Kowalski_CV.pdf)" />
-                  <TextField fx:id="txtCvPath" promptText="Wpisz nazwę pliku lub ścieżkę do CV" />
+                  <Label text="Plik CV (Format PDF)" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <TextField fx:id="txtCvPath" disable="true" editable="false" promptText="Brak CV..." HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#handleUploadCv" text="Wybierz plik PDF" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <HBox spacing="15.0">

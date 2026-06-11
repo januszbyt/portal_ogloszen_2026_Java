@@ -35,6 +35,8 @@ public class ProfilController {
     private int userId;
     private String userRole;
     private String dbPasswordHash;
+    private java.io.File selectedCvFile = null;
+    private String currentCvPath = null;
 
     @FXML
     public void initialize() {
@@ -81,7 +83,11 @@ public class ProfilController {
                 if (rs.next()) {
                     txtFirstName.setText(rs.getString("FirstName"));
                     txtLastName.setText(rs.getString("LastName"));
-                    txtCvPath.setText(rs.getString("CVFilePath"));
+                    currentCvPath = rs.getString("CVFilePath");
+                    if (currentCvPath != null) {
+                        java.io.File file = new java.io.File(currentCvPath);
+                        txtCvPath.setText(file.getName());
+                    }
                     txtLinkedin.setText(rs.getString("LinkedinURL"));
                     txtGithub.setText(rs.getString("GithubURL"));
                 }
@@ -103,9 +109,9 @@ public class ProfilController {
 
     @FXML
     private void handleSave(ActionEvent event) {
-        String email = txtEmail.getText().trim();
-        String oldPass = txtOldPassword.getText();
-        String newPass = txtNewPassword.getText();
+        String email = txtEmail.getText() == null ? "" : txtEmail.getText().trim();
+        String oldPass = txtOldPassword.getText() == null ? "" : txtOldPassword.getText();
+        String newPass = txtNewPassword.getText() == null ? "" : txtNewPassword.getText();
 
         if (email.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Pole e-mail nie może być puste.");
@@ -126,7 +132,7 @@ public class ProfilController {
 
         // Walidacja Modulo 11 dla NIPu pracodawcy
         if ("Employer".equals(userRole)) {
-            String nip = txtNip.getText().trim();
+            String nip = txtNip.getText() == null ? "" : txtNip.getText().trim();
             if (!nip.isEmpty() && !isValidNIP(nip)) {
                 showAlert(Alert.AlertType.ERROR, "Błędny NIP", "Podany numer NIP jest niepoprawny matematycznie (błędna suma kontrolna).");
                 return;
@@ -154,22 +160,41 @@ public class ProfilController {
 
             // Aktualizacja tabel powiązanych
             if ("Candidate".equals(userRole)) {
+                if (selectedCvFile != null) {
+                    try {
+                        java.io.File cvDir = new java.io.File("cv");
+                        if (!cvDir.exists()) {
+                            cvDir.mkdirs();
+                        }
+                        java.io.File destFile = new java.io.File(cvDir, selectedCvFile.getName());
+                        java.nio.file.Files.copy(selectedCvFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        
+                        currentCvPath = destFile.getAbsolutePath();
+                        txtCvPath.setText(destFile.getName());
+                        selectedCvFile = null;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się zapisać pliku CV na dysku.");
+                        conn.rollback();
+                        return;
+                    }
+                }
                 String candSql = "UPDATE Candidates SET FirstName=?, LastName=?, CVFilePath=?, LinkedinURL=?, GithubURL=? WHERE CandidateID=?";
                 try (PreparedStatement pstmt = conn.prepareStatement(candSql)) {
-                    pstmt.setString(1, txtFirstName.getText().trim());
-                    pstmt.setString(2, txtLastName.getText().trim());
-                    pstmt.setString(3, txtCvPath.getText().trim());
-                    pstmt.setString(4, txtLinkedin.getText().trim());
-                    pstmt.setString(5, txtGithub.getText().trim());
+                    pstmt.setString(1, txtFirstName.getText() == null ? "" : txtFirstName.getText().trim());
+                    pstmt.setString(2, txtLastName.getText() == null ? "" : txtLastName.getText().trim());
+                    pstmt.setString(3, currentCvPath);
+                    pstmt.setString(4, txtLinkedin.getText() == null ? "" : txtLinkedin.getText().trim());
+                    pstmt.setString(5, txtGithub.getText() == null ? "" : txtGithub.getText().trim());
                     pstmt.setInt(6, userId);
                     pstmt.executeUpdate();
                 }
             } else if ("Employer".equals(userRole)) {
                 String empSql = "UPDATE Employers SET CompanyName=?, Description=?, NIP=? WHERE EmployerID=?";
                 try (PreparedStatement pstmt = conn.prepareStatement(empSql)) {
-                    pstmt.setString(1, txtCompanyName.getText().trim());
-                    pstmt.setString(2, txtDescription.getText().trim());
-                    pstmt.setString(3, txtNip.getText().trim());
+                    pstmt.setString(1, txtCompanyName.getText() == null ? "" : txtCompanyName.getText().trim());
+                    pstmt.setString(2, txtDescription.getText() == null ? "" : txtDescription.getText().trim());
+                    pstmt.setString(3, txtNip.getText() == null ? "" : txtNip.getText().trim());
                     pstmt.setInt(4, userId);
                     pstmt.executeUpdate();
                 }
@@ -224,6 +249,20 @@ public class ProfilController {
                 e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się poprawnie skasować konta z bazy danych.");
             }
+        }
+    }
+
+    @FXML
+    private void handleUploadCv(ActionEvent event) {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Wybierz plik CV (PDF)");
+        fileChooser.getExtensionFilters().add(
+            new javafx.stage.FileChooser.ExtensionFilter("Pliki PDF (*.pdf)", "*.pdf")
+        );
+        java.io.File file = fileChooser.showOpenDialog(txtCvPath.getScene().getWindow());
+        if (file != null) {
+            selectedCvFile = file;
+            txtCvPath.setText(file.getName());
         }
     }
 

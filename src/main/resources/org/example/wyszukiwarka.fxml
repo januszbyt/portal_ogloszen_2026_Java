@@ -96,7 +96,7 @@
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="15.0">
                                  <children>
-                                    <TextField fx:id="txtSearchUser" minWidth="100.0" prefWidth="300.0" promptText="Szukaj pracy (fraza)..." />
+                                    <TextField fx:id="txtSearchUser" minWidth="100.0" prefWidth="300.0" promptText="Szukaj pracy..." />
                                     <Button fx:id="btnRefreshOffers" minWidth="50.0" mnemonicParsing="false" onAction="#handleRefreshOffers" prefWidth="80.0" style="-fx-cursor: hand; -fx-body-color: #52FFDE; -fx-inner-border: #A3FFED;" text="Odśwież" />
                                     <Button fx:id="btnSearchUser1" minWidth="50.0" mnemonicParsing="false" onAction="#obslugaPrzyciskuFiltry" prefWidth="80.0" style="-fx-cursor: hand;" text="Filtry" />
                                  </children>
