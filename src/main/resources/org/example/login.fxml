@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -26,47 +27,51 @@
    </top>
 
    <center>
-      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
-         <children>
-            
-            <ImageView fx:id="logoImageView" fitHeight="100.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@pictures/Logo.png" />
-               </image>
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </ImageView>
-
-            <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-box">
+      <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" BorderPane.alignment="CENTER">
+         <content>
+            <VBox alignment="CENTER" spacing="20.0">
                <children>
-                  <Label styleClass="title-label" text="Logowanie" />
                   
-                  <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
-                     <children>
-                        <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
-                        <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
-                     </children>
+                  <ImageView fx:id="logoImageView" fitHeight="100.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@pictures/Logo.png" />
+                     </image>
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
-                  </VBox>
+                  </ImageView>
 
-                  <VBox alignment="CENTER" maxWidth="-Infinity" prefWidth="320.0" spacing="12.0">
+                  <VBox alignment="CENTER" maxWidth="400.0" spacing="20.0" styleClass="login-box">
                      <children>
-                        <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
-                        <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
-                        <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+                        <Label styleClass="title-label" text="Logowanie" />
+                        
+                        <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="12.0">
+                           <children>
+                              <TextField fx:id="emailField" maxWidth="1.7976931348623157E308" promptText="Email" />
+                              <PasswordField fx:id="passwordField" maxWidth="1.7976931348623157E308" promptText="Hasło" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </VBox>
+
+                        <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="12.0">
+                           <children>
+                              <Button fx:id="loginButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" text="Zaloguj się" />
+                              <Hyperlink fx:id="registerLink" onAction="#handleRegister" text="Zarejestruj się" />
+                              <Hyperlink onAction="#handleForgotPassword" text="Nie pamiętam hasła" />
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
+                  
                </children>
+               <padding>
+                  <Insets bottom="40.0" top="20.0" />
+               </padding>
             </VBox>
-            
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="60.0" />
-         </BorderPane.margin>
-      </VBox>
+         </content>
+      </ScrollPane>
    </center>
 
 </BorderPane>
