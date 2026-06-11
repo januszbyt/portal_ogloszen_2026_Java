@@ -448,3 +448,4 @@ public class WyszukiwarkaController {
         App.setRoot("profil");
     }
 }
+//naprawa

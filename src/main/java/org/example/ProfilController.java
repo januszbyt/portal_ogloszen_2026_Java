@@ -258,3 +258,5 @@ public class ProfilController {
         alert.showAndWait();
     }
 }
+
+//naprawa

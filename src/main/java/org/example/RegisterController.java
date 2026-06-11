@@ -234,3 +234,5 @@ public class RegisterController {
         App.setRoot("login");
     }
 }
+
+//naprawa

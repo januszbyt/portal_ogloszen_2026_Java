@@ -324,3 +324,5 @@ public class PracodawcaController {
         alert.showAndWait();
     }
 }
+
+//naprawa

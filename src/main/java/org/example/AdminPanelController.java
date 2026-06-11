@@ -417,3 +417,5 @@ public class AdminPanelController {
         public String getStatus() { return status.get(); }
     }
 }
+
+//naprawa

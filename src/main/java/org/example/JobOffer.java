@@ -58,3 +58,4 @@ public class JobOffer {
     public String getCompanyName() { return companyName; }
     public void setCompanyName(String companyName) { this.companyName = companyName; }
 }
+//naprawa
