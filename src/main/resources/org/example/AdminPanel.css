@@ -59,6 +59,7 @@
 
 .button-danger {
     -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
     -fx-effect: none;
 }
 .button-danger:hover {
@@ -132,14 +133,10 @@
     -fx-background-color: -panel-bg; 
     -fx-background-radius: 12px;
     -fx-padding: 20px;
-
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 6);
-
     -fx-border-color: -accent-color; 
     -fx-border-width: 6px 0 0 0; 
     -fx-border-radius: 12px;
-    
-    -fx-margin: 20px;
 }
 
 /* Tabele */
@@ -172,6 +169,7 @@
     -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
     -fx-padding: 12px 0;
     -fx-size: 50px;
+    -fx-alignment: CENTER;           /* Wyśrodkowanie nagłówków */
 }
 
 .table-view .column-header .label {
@@ -184,6 +182,7 @@
     -fx-border-color: -border-light; /* Użycie delikatniejszego koloru */
     -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
     -fx-padding: 0 10px;
+    -fx-alignment: CENTER;           /* ZMIANA: Wyśrodkowanie tekstu w komórkach */
 }
 
 /* Gladkie, wysokie wiersze */
@@ -224,20 +223,20 @@
     -fx-border-color: transparent;
 }
 
-/* Ścieżka paska (track) */
+/* Sciezka paska (track) */
 .table-view .scroll-bar .track,
 .table-view .scroll-bar .track-background {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
-/* "Łapacz" paska (ten suwak, którym ruszamy) */
+/* Lapacz paska */
 .table-view .scroll-bar .thumb {
     -fx-background-color: -border-color;
     -fx-background-radius: 4px;
 }
 
-/* Ukrycie strzałek góra/dół i ich tła, by nie generowały białych kwadratów */
+/* Ukrycie strzalek góra/dól i ich tla, by nie generowały białych kwadratów */
 .table-view .scroll-bar .increment-button,
 .table-view .scroll-bar .decrement-button {
     -fx-background-color: transparent;

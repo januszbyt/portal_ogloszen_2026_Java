@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.AdminPanelController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="900.0" stylesheets="@AdminPanel.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.AdminPanelController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" styleClass="header-bar" BorderPane.alignment="CENTER">
          <children>
@@ -77,7 +77,7 @@
                            <children>
                               <Button fx:id="btnBlockUser" mnemonicParsing="false" onAction="#handleBlockUser" text="Zablokuj" />
                               <Button fx:id="btnUnblockUser" mnemonicParsing="false" onAction="#handleUnblockUser" text="Odblokuj" />
-                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń konto (Trwale)" />
+                              <Button fx:id="btnDeleteUser" mnemonicParsing="false" onAction="#handleDeleteUser" styleClass="button-danger" text="Usuń konto (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
@@ -122,7 +122,7 @@
                         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="btnViewOffer" mnemonicParsing="false" onAction="#handleViewOffer" text="Podgląd ogłoszenia" />
-                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" onAction="#handleDeleteOffer" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="Usuń ofertę (Trwale)" />
+                              <Button fx:id="btnDeleteOffer" mnemonicParsing="false" onAction="#handleDeleteOffer" styleClass="button-danger" text="Usuń ofertę (Trwale)" />
                            </children>
                            <padding>
                               <Insets left="15.0" right="15.0" />
