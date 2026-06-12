@@ -235,7 +235,7 @@ public class PracodawcaController {
         ObservableList<String> displayRows = FXCollections.observableArrayList();
         currentApplicationsIdList.clear();
 
-        String sql = "SELECT a.ApplicationID, c.FirstName, c.LastName, c.CVFilePath, s.StatusName FROM Applications a " +
+        String sql = "SELECT a.ApplicationID, c.FirstName, c.LastName, s.StatusName FROM Applications a " +
                      "JOIN Candidates c ON a.CandidateID = c.CandidateID " +
                      "JOIN ApplicationStatuses s ON a.StatusID = s.StatusID " +
                      "WHERE a.OfferID = ?";
@@ -245,8 +245,8 @@ public class PracodawcaController {
             ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
-                String cvFile = rs.getString("CVFilePath") != null ? rs.getString("CVFilePath") : "CV.pdf";
-                String candidateInfo = rs.getString("FirstName") + " " + rs.getString("LastName") + " - " + cvFile + " (" + rs.getString("StatusName") + ")";
+                String candidateInfo = rs.getString("FirstName") + " " + rs.getString("LastName") + " (" + rs.getString("StatusName") + ")";
+                
                 displayRows.add(candidateInfo);
                 currentApplicationsIdList.add(rs.getInt("ApplicationID"));
             }
