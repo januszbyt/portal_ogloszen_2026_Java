@@ -8,6 +8,15 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -32,6 +41,8 @@ public class PracodawcaController {
     @FXML private TableColumn<JobOffer, String> colStatus;
 
     @FXML private ListView<String> candidatesListView;
+    
+    @FXML private Button btnToggleTheme;
 
     private final ObservableList<JobOffer> offersList = FXCollections.observableArrayList();
     private JobOffer selectedOfferForEdit = null;
@@ -51,6 +62,14 @@ public class PracodawcaController {
         }
         
         loggedInEmployerId = UserSession.getInstance().getUserId();
+
+        if (btnToggleTheme != null) {
+            if (App.isDarkMode) {
+                btnToggleTheme.setText("☀ Jasny Motyw");
+            } else {
+                btnToggleTheme.setText("🌙 Ciemny Motyw");
+            }
+        }
 
         loadDictionariesFromDB();
         categoryCombo.setItems(FXCollections.observableArrayList(categoryMap.keySet()));
@@ -73,7 +92,6 @@ public class PracodawcaController {
             }
         });
 
-        // NOWOŚĆ: Obsługa podwójnego kliknięcia na liście kandydatów
         candidatesListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 handleCandidateDoubleClick();
@@ -81,10 +99,26 @@ public class PracodawcaController {
         });
     }
 
-    // NOWOŚĆ: Metoda otwierająca okno ze szczegółami wybranego kandydata
+    @FXML
+    private void handleToggleTheme(ActionEvent event) {
+        App.isDarkMode = !App.isDarkMode;
+
+        if (btnToggleTheme != null && btnToggleTheme.getScene() != null) {
+            App.applyTheme(btnToggleTheme.getScene());
+        }
+
+        if (btnToggleTheme != null) {
+            if (App.isDarkMode) {
+                btnToggleTheme.setText("☀ Jasny Motyw"); 
+            } else {
+                btnToggleTheme.setText("🌙 Ciemny Motyw");
+            }
+        }
+    }
+
     private void handleCandidateDoubleClick() {
         int index = candidatesListView.getSelectionModel().getSelectedIndex();
-        if (index < 0) return; // Jeśli nic nie wybrano, przerwij
+        if (index < 0) return; 
 
         int appId = currentApplicationsIdList.get(index);
         String sql = "SELECT c.FirstName, c.LastName, c.CVFilePath, c.LinkedinURL, c.GithubURL, u.Email, s.StatusName " +
@@ -108,20 +142,15 @@ public class PracodawcaController {
                     String github = rs.getString("GithubURL") != null ? rs.getString("GithubURL") : "Brak";
                     String status = rs.getString("StatusName");
 
-                    // Tworzenie dedykowanego okna Dialog
                     Dialog<Void> dialog = new Dialog<>();
                     dialog.setTitle("Profil Kandydata");
                     dialog.setHeaderText("Szczegółowe dane kandydata");
 
-                    // Próba załadowania globalnych stylów aplikacji do okienka dialogowego
-                    try {
-                        dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-                    } catch (Exception ignored) {}
+                    applyStylesToDialog(dialog);
 
                     ButtonType closeButton = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
                     dialog.getDialogPane().getButtonTypes().add(closeButton);
 
-                    // Tworzenie przejrzystego układu dla danych kandydata
                     VBox dialogContent = new VBox(12);
                     dialogContent.setPadding(new Insets(20));
                     dialogContent.setPrefWidth(450);
@@ -136,7 +165,6 @@ public class PracodawcaController {
 
                     dialogContent.getChildren().addAll(lblName, lblEmail, lblStatus, lblLinkedin, lblGithub);
 
-                    // Jeśli ścieżka do CV istnieje w bazie danych, dodaj przycisk do jego otwarcia
                     if (cvPath != null && !cvPath.isEmpty()) {
                         Button btnOpenCv = new Button("📄 Wyświetl plik CV (PDF)");
                         btnOpenCv.setMaxWidth(Double.MAX_VALUE);
@@ -145,7 +173,6 @@ public class PracodawcaController {
                             try {
                                 java.io.File file = new java.io.File(cvPath);
                                 
-                                // Obsługa zarówno ścieżek bezwzględnych jak i relatywnych (w folderze cv/)
                                 if (!file.exists()) {
                                     file = new java.io.File("cv/" + file.getName());
                                 }
@@ -154,7 +181,6 @@ public class PracodawcaController {
                                     if (java.awt.Desktop.isDesktopSupported()) {
                                         java.awt.Desktop.getDesktop().open(file);
                                     } else {
-                                        // Zapasowa metoda dla systemów z ograniczonym wsparciem Desktop API
                                         new ProcessBuilder("cmd", "/c", "start", file.getAbsolutePath()).start();
                                     }
                                 } else {
@@ -176,6 +202,13 @@ public class PracodawcaController {
                     }
 
                     dialog.getDialogPane().setContent(dialogContent);
+                    
+                    // DODANO: Znajdujemy wygenerowany przycisk "Zamknij" i nakładamy mu czerwoną klasę CSS
+                    Button closeBtnNode = (Button) dialog.getDialogPane().lookupButton(closeButton);
+                    if (closeBtnNode != null) {
+                        closeBtnNode.getStyleClass().add("button-danger");
+                    }
+                    
                     dialog.showAndWait();
                 }
             }
@@ -366,6 +399,10 @@ public class PracodawcaController {
         if (selected == null) return;
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Czy na pewno chcesz bezpowrotnie usunąć to ogłoszenie?", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Potwierdzenie usunięcia");
+        alert.setHeaderText(null);
+        applyStylesToDialog(alert); 
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.YES) {
             String sql = "DELETE FROM JobOffers WHERE OfferID = ?";
@@ -430,6 +467,67 @@ public class PracodawcaController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        applyStylesToDialog(alert); 
         alert.showAndWait();
+    }
+
+    private void applyStylesToDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("pracodawca.css").toExternalForm());
+            
+            if (App.isDarkMode) {
+                dialog.getDialogPane().getStyleClass().add("dark-mode");
+            }
+
+            dialog.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            // Sprawdzenie, czy okienko jest oknem błędu
+            boolean isErrorAlert = (dialog instanceof Alert && ((Alert) dialog).getAlertType() == Alert.AlertType.ERROR);
+
+            try {
+                Image logoIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+                
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(logoIcon);
+                
+                ImageView iconView = new ImageView(logoIcon);
+                iconView.setFitWidth(34);
+                iconView.setFitHeight(34);
+                iconView.setPreserveRatio(true);
+                
+                StackPane iconContainer = new StackPane(iconView);
+                iconContainer.setAlignment(javafx.geometry.Pos.CENTER);
+                
+                // DODANO: Zmiana tła, obramowania i koloru cienia, jeśli to okno ERROR
+                if (isErrorAlert) {
+                    iconContainer.setStyle("-fx-background-color: #fee2e2; -fx-background-radius: 12px; -fx-padding: 8px; -fx-border-color: #ef4444; -fx-border-radius: 12px; -fx-border-width: 2px;");
+                    
+                    DropShadow dropShadow = new DropShadow();
+                    dropShadow.setColor(Color.rgb(239, 68, 68, 0.4)); // Czerwony cień
+                    dropShadow.setRadius(12);
+                    dropShadow.setSpread(0.1);
+                    dropShadow.setOffsetY(3);
+                    iconContainer.setEffect(dropShadow);
+                } else {
+                    iconContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 8px;");
+                    
+                    DropShadow dropShadow = new DropShadow();
+                    dropShadow.setColor(Color.rgb(0, 0, 0, 0.25)); // Standardowy czarny cień
+                    dropShadow.setRadius(12);
+                    dropShadow.setSpread(0.05);
+                    dropShadow.setOffsetY(3);
+                    iconContainer.setEffect(dropShadow);
+                }
+
+                dialog.setGraphic(iconContainer);
+                
+            } catch (Exception e) {
+                System.err.println("Nie udało się załadować LogoIcon.png: " + e.getMessage());
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
+        }
     }
 }

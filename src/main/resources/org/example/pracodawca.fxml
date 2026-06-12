@@ -36,7 +36,8 @@
                   <TextField fx:id="titleField" promptText="np. Senior Java Developer" />
                   
                   <Label text="Kategoria / Branża:" />
-                  <ComboBox fx:id="categoryCombo" prefWidth="300.0" promptText="Wybierz kategorię..." />
+                  <!-- POPRAWIONO: maxWidth rozciąga pole równo do Tytułu oferty -->
+                  <ComboBox fx:id="categoryCombo" maxWidth="1.7976931348623157E308" promptText="Wybierz kategorię..." />
                   
                   <Label text="Lokalizacja:" />
                   <TextField fx:id="locationField" promptText="np. Warszawa / Zdalnie" />
@@ -77,8 +78,14 @@
          </content>
       </ScrollPane>
 
-      <VBox prefWidth="535.0" spacing="15.0" HBox.hgrow="ALWAYS" style="-fx-padding: 11 0 0 0;">
+      <VBox prefWidth="535.0" spacing="15.0" HBox.hgrow="ALWAYS" style="-fx-padding: 0 0 0 0;">
          <children>
+            <HBox alignment="TOP_RIGHT" prefHeight="40.0">
+               <children>
+                  <Button fx:id="btnToggleTheme" mnemonicParsing="false" onAction="#handleToggleTheme" styleClass="button, theme-btn" text="🌙 Ciemny Motyw" />
+               </children>
+            </HBox>
+            
             <VBox prefHeight="320.0" spacing="5.0" VBox.vgrow="ALWAYS">
                <children>
                   <Label text="Twoje Aktywne i Zakończone Ogłoszenia:">
