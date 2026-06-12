@@ -45,4 +45,3 @@ public class UserSession {
         return firstName;
     }
 }
-//naprawa

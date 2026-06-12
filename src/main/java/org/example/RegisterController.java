@@ -48,26 +48,32 @@ public class RegisterController {
     @FXML
     private Button btnZmianaMotywu;
 
-    private boolean isDarkMode = false;
+    // USUNIĘTO: lokalną zmienną isDarkMode, korzystamy z App.isDarkMode
 
+    // ZMIENIONO: Metoda teraz operuje na globalnym motywie
     @FXML
     public void zmienMotyw(ActionEvent event) {
-        Scene scene = btnZmianaMotywu.getScene();
-        Pane root = (Pane) scene.getRoot();
+        App.isDarkMode = !App.isDarkMode;
+        App.applyTheme(btnZmianaMotywu.getScene());
 
-        if (isDarkMode) {
-            root.getStyleClass().remove("dark-mode");
-            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
-            isDarkMode = false;
-        } else {
-            root.getStyleClass().add("dark-mode");
+        if (App.isDarkMode) {
             btnZmianaMotywu.setText("☀ Jasny Motyw"); 
-            isDarkMode = true;
+        } else {
+            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
         }
     }
 
     @FXML
     public void initialize() {
+        // DODANO: Ustawienie tekstu przycisku przy wejściu na widok rejestracji
+        if (btnZmianaMotywu != null) {
+            if (App.isDarkMode) {
+                btnZmianaMotywu.setText("☀ Jasny Motyw");
+            } else {
+                btnZmianaMotywu.setText("🌙 Ciemny Motyw");
+            }
+        }
+
         // Słuchacz zmiany roli w celu dynamicznego dostosowania formularza
         roleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == businessRadio) {
@@ -82,7 +88,8 @@ public class RegisterController {
             }
         });
     }
- // Metoda pomocnicza do wyświetlania okienek z komunikatami
+
+    // Metoda pomocnicza do wyświetlania okienek z komunikatami
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -234,5 +241,3 @@ public class RegisterController {
         App.setRoot("login");
     }
 }
-
-//naprawa

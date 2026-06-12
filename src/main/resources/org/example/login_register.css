@@ -163,9 +163,9 @@
     -fx-background-insets: 0;
 }
 
-/* DODANO: CIEMNY MOTYW ORAZ PRZYCISK ZMIANY MOTYWU         */
 
-.dark-mode {
+
+.root.dark-mode {
     -bg-color: #121212;
     -panel-bg: #1e1e1e;
     -text-color: #ffffff;

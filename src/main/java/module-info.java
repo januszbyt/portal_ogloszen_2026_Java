@@ -7,7 +7,7 @@ module org.example {
     
     requires transitive java.sql;
 	requires java.desktop;        // Do połączenia z bazą danych  (SQL)
-
+	requires java.prefs;
     opens org.example to javafx.fxml;    
     exports org.example;                
 }

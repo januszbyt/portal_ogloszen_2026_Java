@@ -36,25 +36,42 @@ public class LoginController {
     @FXML
     private Button btnZmianaMotywu;
 
-    private boolean isDarkMode = false;
+    // DODANO: Inicjalizacja przy wejściu na widok logowania
+    @FXML
+    public void initialize() {
+        // Synchronizacja przycisku i logo z globalnym stanem motywu przy ładowaniu
+        if (App.isDarkMode) {
+            btnZmianaMotywu.setText("☀ Jasny Motyw"); 
+            try {
+                logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/LogoWhite.png")));
+            } catch (Exception e) { /* ignoruj błąd braku obrazka */ }
+        } else {
+            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
+            try {
+                logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/Logo.png")));
+            } catch (Exception e) { /* ignoruj błąd braku obrazka */ }
+        }
+    }
 
+    // DODANO/ZMIENIONO: Obsługa globalnej flagi w App.java
     @FXML
     public void zmienMotyw(ActionEvent event) {
-        Scene scene = btnZmianaMotywu.getScene();
-        Pane root = (Pane) scene.getRoot();
+        // Przełączenie globalnej flagi na przeciwną
+        App.isDarkMode = !App.isDarkMode;
+        
+        // Aplikowanie motywu na całą scenę
+        App.applyTheme(btnZmianaMotywu.getScene());
 
-        if (isDarkMode) {
-            // Włączanie jasnego motywu
-            root.getStyleClass().remove("dark-mode");
-            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/Logo.png"))); // Zmiana na ciemne logo
-            isDarkMode = false;
-        } else {
-            // Włączanie ciemnego motywu
-            root.getStyleClass().add("dark-mode");
+        if (App.isDarkMode) {
             btnZmianaMotywu.setText("☀ Jasny Motyw"); 
-            logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/LogoWhite.png"))); // Zmiana na białe logo
-            isDarkMode = true;
+            try {
+                logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/LogoWhite.png")));
+            } catch (Exception e) {}
+        } else {
+            btnZmianaMotywu.setText("🌙 Ciemny Motyw");
+            try {
+                logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/Logo.png")));
+            } catch (Exception e) {}
         }
     }
 

@@ -8,6 +8,7 @@ import javafx.scene.image.Image; // DODANO: Import klasy Image
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.prefs.Preferences; // DODANO: Import do trwałego zapisywania ustawień
 
 /**
  * JavaFX App
@@ -15,11 +16,21 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    
+    // DODANO: Inicjalizacja pamięci ustawień dla naszej aplikacji
+    private static final Preferences prefs = Preferences.userNodeForPackage(App.class);
+    
+    // ZMIENIONO: Teraz na starcie pobieramy zapisany stan (domyślnie false, jeśli to pierwsze uruchomienie)
+    public static boolean isDarkMode = prefs.getBoolean("isDarkMode", false);
 
     @Override
     public void start(Stage stage) throws IOException {
         // Zwiększamy domyślny rozmiar początkowy na 800x600
         scene = new Scene(loadFXML("login"), 800, 600);
+        
+        // DODANO: Aplikowanie motywu przy starcie
+        applyTheme(scene);
+
         stage.setScene(scene);
         stage.setTitle("System Ofert Pracy");
         stage.setMinWidth(600);
@@ -45,11 +56,29 @@ public class App extends Application {
 
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
+        // Automatyczne aplikowanie motywu po każdej zmianie widoku
+        applyTheme(scene);
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    // Metoda do aplikacji CSS do korzenia (root) sceny
+    public static void applyTheme(Scene currentScene) {
+        // Zapisywanie wybranego motywu do trwałej pamięci systemowej przy każdej jego zmianie
+        prefs.putBoolean("isDarkMode", isDarkMode);
+
+        if (currentScene == null || currentScene.getRoot() == null) return;
+
+        if (isDarkMode) {
+            if (!currentScene.getRoot().getStyleClass().contains("dark-mode")) {
+                currentScene.getRoot().getStyleClass().add("dark-mode");
+            }
+        } else {
+            currentScene.getRoot().getStyleClass().remove("dark-mode");
+        }
     }
 
     public static void main(String[] args) {
