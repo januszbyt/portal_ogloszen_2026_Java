@@ -4,8 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -56,7 +58,7 @@ public class PracodawcaController {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
         colLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
-        colSalary.setCellValueFactory(new PropertyValueFactory<>("salaryRange")); // Model sam sklei MIN i MAX do tego stringa
+        colSalary.setCellValueFactory(new PropertyValueFactory<>("salaryRange")); 
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         offersTable.setItems(offersList);
@@ -70,6 +72,117 @@ public class PracodawcaController {
                 currentApplicationsIdList.clear();
             }
         });
+
+        // NOWOŚĆ: Obsługa podwójnego kliknięcia na liście kandydatów
+        candidatesListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                handleCandidateDoubleClick();
+            }
+        });
+    }
+
+    // NOWOŚĆ: Metoda otwierająca okno ze szczegółami wybranego kandydata
+    private void handleCandidateDoubleClick() {
+        int index = candidatesListView.getSelectionModel().getSelectedIndex();
+        if (index < 0) return; // Jeśli nic nie wybrano, przerwij
+
+        int appId = currentApplicationsIdList.get(index);
+        String sql = "SELECT c.FirstName, c.LastName, c.CVFilePath, c.LinkedinURL, c.GithubURL, u.Email, s.StatusName " +
+                     "FROM Applications a " +
+                     "JOIN Candidates c ON a.CandidateID = c.CandidateID " +
+                     "JOIN Users u ON c.CandidateID = u.UserID " +
+                     "JOIN ApplicationStatuses s ON a.StatusID = s.StatusID " +
+                     "WHERE a.ApplicationID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, appId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String firstName = rs.getString("FirstName");
+                    String lastName = rs.getString("LastName");
+                    String email = rs.getString("Email");
+                    String cvPath = rs.getString("CVFilePath");
+                    String linkedin = rs.getString("LinkedinURL") != null ? rs.getString("LinkedinURL") : "Brak";
+                    String github = rs.getString("GithubURL") != null ? rs.getString("GithubURL") : "Brak";
+                    String status = rs.getString("StatusName");
+
+                    // Tworzenie dedykowanego okna Dialog
+                    Dialog<Void> dialog = new Dialog<>();
+                    dialog.setTitle("Profil Kandydata");
+                    dialog.setHeaderText("Szczegółowe dane kandydata");
+
+                    // Próba załadowania globalnych stylów aplikacji do okienka dialogowego
+                    try {
+                        dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+                    } catch (Exception ignored) {}
+
+                    ButtonType closeButton = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    dialog.getDialogPane().getButtonTypes().add(closeButton);
+
+                    // Tworzenie przejrzystego układu dla danych kandydata
+                    VBox dialogContent = new VBox(12);
+                    dialogContent.setPadding(new Insets(20));
+                    dialogContent.setPrefWidth(450);
+
+                    Label lblName = new Label("👤 Imię i Nazwisko: " + firstName + " " + lastName);
+                    lblName.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+                    
+                    Label lblEmail = new Label("✉ Adres E-mail: " + email);
+                    Label lblStatus = new Label("📋 Status aplikacji: " + status);
+                    Label lblLinkedin = new Label("🔗 LinkedIn: " + linkedin);
+                    Label lblGithub = new Label("💻 GitHub: " + github);
+
+                    dialogContent.getChildren().addAll(lblName, lblEmail, lblStatus, lblLinkedin, lblGithub);
+
+                    // Jeśli ścieżka do CV istnieje w bazie danych, dodaj przycisk do jego otwarcia
+                    if (cvPath != null && !cvPath.isEmpty()) {
+                        Button btnOpenCv = new Button("📄 Wyświetl plik CV (PDF)");
+                        btnOpenCv.setMaxWidth(Double.MAX_VALUE);
+                        
+                        btnOpenCv.setOnAction(e -> {
+                            try {
+                                java.io.File file = new java.io.File(cvPath);
+                                
+                                // Obsługa zarówno ścieżek bezwzględnych jak i relatywnych (w folderze cv/)
+                                if (!file.exists()) {
+                                    file = new java.io.File("cv/" + file.getName());
+                                }
+
+                                if (file.exists()) {
+                                    if (java.awt.Desktop.isDesktopSupported()) {
+                                        java.awt.Desktop.getDesktop().open(file);
+                                    } else {
+                                        // Zapasowa metoda dla systemów z ograniczonym wsparciem Desktop API
+                                        new ProcessBuilder("cmd", "/c", "start", file.getAbsolutePath()).start();
+                                    }
+                                } else {
+                                    showAlert(Alert.AlertType.ERROR, "Błąd pliku", "Nie znaleziono pliku CV na dysku serwera pod ścieżką: " + cvPath);
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                showAlert(Alert.AlertType.ERROR, "Błąd systemu", "Nie udało się otworzyć dokumentu PDF: " + ex.getMessage());
+                            }
+                        });
+
+                        dialogContent.getChildren().add(new Separator());
+                        dialogContent.getChildren().add(btnOpenCv);
+                    } else {
+                        Label lblNoCv = new Label("❌ Brak załączonego pliku CV dla tej aplikacji.");
+                        lblNoCv.setStyle("-fx-text-fill: #d9534f; -fx-font-style: italic;");
+                        dialogContent.getChildren().add(new Separator());
+                        dialogContent.getChildren().add(lblNoCv);
+                    }
+
+                    dialog.getDialogPane().setContent(dialogContent);
+                    dialog.showAndWait();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Błąd bazy danych", "Nie udało się wczytać profilu kandydata.");
+        }
     }
 
     private void loadDictionariesFromDB() {
@@ -100,7 +213,6 @@ public class PracodawcaController {
             ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
-               
                 JobOffer offer = new JobOffer(
                     rs.getInt("OfferID"),
                     rs.getString("Title"),
@@ -152,7 +264,6 @@ public class PracodawcaController {
         String sMin = salaryMinField.getText() != null ? salaryMinField.getText().trim() : "";
         String sMax = salaryMaxField.getText() != null ? salaryMaxField.getText().trim() : "";
 
-        // USUNĘLIŚMY sMin.isEmpty() i sMax.isEmpty() z walidacji – teraz mogą być puste!
         if (title.isEmpty() || location.isEmpty() || desc.isEmpty() || categoryCombo.getValue() == null) {
             showAlert(Alert.AlertType.WARNING, "Walidacja", "Wypełnij tytuł, lokalizację, opis i kategorię!");
             return;
@@ -166,14 +277,12 @@ public class PracodawcaController {
             pstmt.setInt(3, categoryMap.getOrDefault(categoryCombo.getValue(), 1));
             pstmt.setString(4, desc);
             
-            // JEŚLI pole min jest puste, wyślij do bazy MySQL wartość NULL
             if (sMin.isEmpty()) {
                 pstmt.setNull(5, java.sql.Types.DECIMAL);
             } else {
                 pstmt.setBigDecimal(5, new BigDecimal(sMin));
             }
 
-            // JEŚLI pole max jest puste, wyślij do bazy MySQL wartość NULL
             if (sMax.isEmpty()) {
                 pstmt.setNull(6, java.sql.Types.DECIMAL);
             } else {
@@ -203,8 +312,8 @@ public class PracodawcaController {
         categoryCombo.setValue(selectedOfferForEdit.getCategory());
         locationField.setText(selectedOfferForEdit.getLocation());
         descriptionArea.setText(selectedOfferForEdit.getDescription());
-        salaryMinField.setText(selectedOfferForEdit.getSalaryMin().toString());
-        salaryMaxField.setText(selectedOfferForEdit.getSalaryMax().toString());
+        salaryMinField.setText(selectedOfferForEdit.getSalaryMin() != null ? selectedOfferForEdit.getSalaryMin().toString() : "");
+        salaryMaxField.setText(selectedOfferForEdit.getSalaryMax() != null ? selectedOfferForEdit.getSalaryMax().toString() : "");
     }
 
     @FXML
@@ -324,5 +433,3 @@ public class PracodawcaController {
         alert.showAndWait();
     }
 }
-
-//naprawa
