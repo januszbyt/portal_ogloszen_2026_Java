@@ -314,30 +314,108 @@ public class WyszukiwarkaController {
             e.printStackTrace();
         }
 
+        // Sprawdzenie czy kandydat ma wgrane CV
+        boolean hasCv = false;
+        String cvQuery = "SELECT CVFilePath FROM Candidates WHERE CandidateID = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(cvQuery)) {
+            pstmt.setInt(1, loggedInCandidateId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String cvPath = rs.getString("CVFilePath");
+                    if (cvPath != null && !cvPath.trim().isEmpty()) {
+                        hasCv = true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
+        applyStylesToDialog(alert);
+        alert.getDialogPane().getStyleClass().add("details-dialog");
+
+        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
+        try {
+            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+        } catch (Exception e) {
+            System.err.println("Błąd ładowania ikony dla podglądu: " + e.getMessage());
+        }
 
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
                                "Opis oferty:\n" + selectedOffer.getDescription() + "\n\n";
 
         ButtonType applyButtonType = new ButtonType("Aplikuj na to stanowisko", ButtonBar.ButtonData.OK_DONE);
+        ButtonType withdrawButtonType = new ButtonType("Zrezygnuj z aplikacji", ButtonBar.ButtonData.OK_DONE);
         ButtonType closeButtonType = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         alert.getButtonTypes().setAll(closeButtonType);
 
         if (alreadyApplied) {
-            dialogContent += "⚠ Już aplikowałeś na to ogłoszenie! Status: W toku.";
+            dialogContent += "⚠ Już aplikowałeś na to ogłoszenie! Status: " + selectedOffer.getStatus() + ".";
+            alert.getButtonTypes().add(0, withdrawButtonType);
         } else {
             alert.getButtonTypes().add(0, applyButtonType);
+            if (!hasCv) {
+                dialogContent += "⚠ Uwaga: Brak załączonego CV w Twoim profilu! Aplikowanie prześle puste zgłoszenie.";
+            } else {
+                dialogContent += "✓ Posiadasz załączone CV w profilu.";
+            }
         }
 
-        alert.setContentText(dialogContent);
+        TextArea textArea = new TextArea(dialogContent);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefWidth(500);
+        textArea.setPrefHeight(300);
+        alert.getDialogPane().setContent(textArea);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == applyButtonType) {
-            applyForJob(selectedOffer);
+        if (result.isPresent()) {
+            if (result.get() == applyButtonType) {
+                if (!hasCv) {
+                    Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmAlert.setTitle("POTWIERDZENIE");
+                    confirmAlert.setHeaderText("Uwaga: Nie masz dodanego pliku CV!");
+                    confirmAlert.setContentText("Czy na pewno chcesz aplikować na tę ofertę bez załączonego pliku CV?\n(Zalecamy najpierw dodać go w zakładce 'Mój Profil')");
+                    applyStylesToDialog(confirmAlert);
+                    
+                    javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
+                    try {
+                        confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+                    } catch (Exception e) {
+                        System.err.println("Błąd ładowania ikony dla potwierdzenia: " + e.getMessage());
+                    }
+
+                    Optional<ButtonType> confirmation = confirmAlert.showAndWait();
+                    if (confirmation.isPresent() && confirmation.get() != ButtonType.OK) {
+                        return; // Anulujemy aplikację
+                    }
+                }
+                applyForJob(selectedOffer);
+            } else if (result.get() == withdrawButtonType) {
+                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmAlert.setTitle("POTWIERDZENIE");
+                confirmAlert.setHeaderText("Wycofanie aplikacji");
+                confirmAlert.setContentText("Czy na pewno chcesz wycofać swoją aplikację na stanowisko " + selectedOffer.getTitle() + "?");
+                applyStylesToDialog(confirmAlert);
+
+                javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
+                try {
+                    confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+                } catch (Exception e) {
+                    System.err.println("Błąd ładowania ikony dla potwierdzenia: " + e.getMessage());
+                }
+
+                Optional<ButtonType> confirmation = confirmAlert.showAndWait();
+                if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+                    withdrawApplication(selectedOffer.getId(), loggedInCandidateId, selectedOffer.getTitle());
+                }
+            }
         }
     }
 
@@ -348,17 +426,80 @@ public class WyszukiwarkaController {
             return;
         }
 
+        UserSession session = UserSession.getInstance();
+        int loggedInCandidateId = session != null ? session.getUserId() : 1;
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
+        applyStylesToDialog(alert);
+        alert.getDialogPane().getStyleClass().add("details-dialog");
+
+        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
+        try {
+            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+        } catch (Exception e) {
+            System.err.println("Błąd ładowania ikony dla podglądu historii: " + e.getMessage());
+        }
 
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
                                "Opis oferty:\n" + selectedOffer.getDescription() + "\n\n" +
                                "⚠ Już aplikowałeś na to ogłoszenie! Status: " + selectedOffer.getStatus() + ".";
 
-        alert.setContentText(dialogContent);
-        alert.showAndWait();
+        ButtonType withdrawButtonType = new ButtonType("Zrezygnuj z aplikacji", ButtonBar.ButtonData.OK_DONE);
+        ButtonType closeButtonType = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(closeButtonType);
+        alert.getButtonTypes().add(0, withdrawButtonType);
+
+        TextArea textArea = new TextArea(dialogContent);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefWidth(500);
+        textArea.setPrefHeight(300);
+        alert.getDialogPane().setContent(textArea);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == withdrawButtonType) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("POTWIERDZENIE");
+            confirmAlert.setHeaderText("Wycofanie aplikacji");
+            confirmAlert.setContentText("Czy na pewno chcesz wycofać swoją aplikację na stanowisko " + selectedOffer.getTitle() + "?");
+            applyStylesToDialog(confirmAlert);
+
+            javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
+            try {
+                confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            Optional<ButtonType> confirmation = confirmAlert.showAndWait();
+            if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+                withdrawApplication(selectedOffer.getId(), loggedInCandidateId, selectedOffer.getTitle());
+            }
+        }
+    }
+
+    private void withdrawApplication(int offerId, int candidateId, String offerTitle) {
+        String deleteQuery = "DELETE FROM Applications WHERE OfferID = ? AND CandidateID = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(deleteQuery)) {
+            pstmt.setInt(1, offerId);
+            pstmt.setInt(2, candidateId);
+            pstmt.executeUpdate();
+
+            showAlert(Alert.AlertType.INFORMATION, "Sukces", "Pomyślnie wycofano aplikację na stanowisko " + offerTitle + ".");
+
+            loadOffersFromDatabase();
+            filterData();
+            loadHistoryFromDatabase();
+            filterHistoryData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się wycofać aplikacji z bazy danych.");
+        }
     }
 
     private void applyForJob(JobOffer offer) {
@@ -376,6 +517,8 @@ public class WyszukiwarkaController {
             pstmt.executeUpdate();
 
             showAlert(Alert.AlertType.INFORMATION, "Sukces!", "Pomyślnie wysłano aplikację na stanowisko " + offer.getTitle() + "!");
+            loadOffersFromDatabase();
+            filterData();
             loadHistoryFromDatabase(); // Odświeżenie historii aplikacji
         } catch (SQLException e) {
             e.printStackTrace();
@@ -442,11 +585,28 @@ public class WyszukiwarkaController {
         filterHistoryData();
     }
 
+    private void applyStylesToDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        applyStylesToDialog(alert);
+        
+        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
+        try {
+            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
+        } catch (Exception e) {
+            System.err.println("Błąd ładowania ikony dla alertu: " + e.getMessage());
+        }
+
         alert.showAndWait();
     }
 
