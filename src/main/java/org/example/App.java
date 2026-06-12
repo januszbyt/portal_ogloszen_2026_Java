@@ -17,10 +17,10 @@ public class App extends Application {
 
     private static Scene scene;
     
-    // DODANO: Inicjalizacja pamięci ustawień dla naszej aplikacji
+    // Inicjalizacja pamięci ustawień dla naszej aplikacji
     private static final Preferences prefs = Preferences.userNodeForPackage(App.class);
     
-    // ZMIENIONO: Teraz na starcie pobieramy zapisany stan (domyślnie false, jeśli to pierwsze uruchomienie)
+    // Teraz na starcie pobieramy zapisany stan (domyślnie false, jeśli to pierwsze uruchomienie)
     public static boolean isDarkMode = prefs.getBoolean("isDarkMode", false);
 
     @Override
@@ -28,7 +28,7 @@ public class App extends Application {
         // Zwiększamy domyślny rozmiar początkowy na 800x600
         scene = new Scene(loadFXML("login"), 800, 600);
         
-        // DODANO: Aplikowanie motywu przy starcie
+        // Aplikowanie motywu przy starcie
         applyTheme(scene);
 
         stage.setScene(scene);

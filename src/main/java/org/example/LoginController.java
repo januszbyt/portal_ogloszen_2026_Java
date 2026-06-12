@@ -53,7 +53,7 @@ public class LoginController {
         }
     }
 
-    // DODANO/ZMIENIONO: Obsługa globalnej flagi w App.java
+    // Obsługa globalnej flagi w App.java
     @FXML
     public void zmienMotyw(ActionEvent event) {
         // Przełączenie globalnej flagi na przeciwną

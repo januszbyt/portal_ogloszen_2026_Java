@@ -10,6 +10,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region; // DODANO: Do ustalania rozmiaru
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.effect.DropShadow; // DODANO: Do nałożenia cienia na ikonę
+import javafx.scene.paint.Color;       // DODANO: Do określenia koloru cienia
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,33 +55,38 @@ public class WyszukiwarkaController {
     @FXML private TableColumn<JobOffer, String> colUserEmail1;
     @FXML private TableColumn<JobOffer, String> colUserDate1;
     @FXML private TableColumn<JobOffer, String> colUserStatus1;
-
+    
     @FXML private Button btnViewOffer1;
     @FXML private Button btnViewOffer11;
+    
+    // Przycisk do zmiany motywu
+    @FXML private Button btnToggleTheme;
 
     private static final ObservableList<JobOffer> allOffers = FXCollections.observableArrayList();
     private final ObservableList<JobOffer> myApplications = FXCollections.observableArrayList();
     private FilteredList<JobOffer> filteredOffers;
     private FilteredList<JobOffer> filteredHistory;
 
-    // Ta metoda odpala się AUTOMATYCZNIE przy starcie aplikacji
     @FXML
     public void initialize() {
-        // Powiąż właściwość 'managed' z 'visible' dla panelu filtrów
-        panelFiltrow.managedProperty().bind(panelFiltrow.visibleProperty());
+        if (btnToggleTheme != null) {
+            if (App.isDarkMode) {
+                btnToggleTheme.setText("☀ Jasny Motyw");
+            } else {
+                btnToggleTheme.setText("🌙 Ciemny Motyw");
+            }
+        }
 
-        // Schowaj panel filtrów na starcie
+        panelFiltrow.managedProperty().bind(panelFiltrow.visibleProperty());
         panelFiltrow.setVisible(false);
         panelFiltrow.setPrefHeight(0);
         panelFiltrow.setMinHeight(0);
 
-        // Ustawienie przywitania zalogowanego użytkownika z sesji
         UserSession session = UserSession.getInstance();
         if (session != null && session.getFirstName() != null) {
             lblWelcome.setText("Witaj, " + session.getFirstName() + "!");
         }
 
-        // Bindowanie kolumn tabeli Dostępnych Ofert
         colCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colUserId.setCellValueFactory(new PropertyValueFactory<>("title"));
         colUserRole.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -82,7 +94,6 @@ public class WyszukiwarkaController {
         colUserDate.setCellValueFactory(new PropertyValueFactory<>("salaryRange"));
         colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Bindowanie kolumn tabeli Historii
         colCompany1.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colUserId1.setCellValueFactory(new PropertyValueFactory<>("title"));
         colUserRole1.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -90,52 +101,41 @@ public class WyszukiwarkaController {
         colUserDate1.setCellValueFactory(new PropertyValueFactory<>("salaryRange"));
         colUserStatus1.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Ustawienie wartości ComboBox kategorii
         comboCategoryFilter.setItems(FXCollections.observableArrayList("Wszystkie", "IT / Software", "Budownictwo", "Finanse", "Sprzedaż"));
         comboCategoryFilter.getSelectionModel().selectFirst();
 
-        // Pobranie danych z bazy przy starcie
         loadOffersFromDatabase();
         loadHistoryFromDatabase();
 
-        // Konfiguracja filtrowania i sortowania dla tabeli głównej
         filteredOffers = new FilteredList<>(allOffers, b -> true);
         SortedList<JobOffer> sortedOffers = new SortedList<>(filteredOffers);
         sortedOffers.comparatorProperty().bind(tableUsers.comparatorProperty());
         tableUsers.setItems(sortedOffers);
 
-        // Konfiguracja filtrowania i sortowania dla tabeli historii
         filteredHistory = new FilteredList<>(myApplications, b -> true);
         SortedList<JobOffer> sortedHistory = new SortedList<>(filteredHistory);
         sortedHistory.comparatorProperty().bind(tableUsers1.comparatorProperty());
         tableUsers1.setItems(sortedHistory);
 
-        // Słuchacz zmian w polu szybkiego wyszukiwania historii
         txtSearchUser1.textProperty().addListener((observable, oldValue, newValue) -> filterHistoryData());
-
-        // Słuchacz zmian w polu szybkiego wyszukiwania oraz filtrach
         txtSearchUser.textProperty().addListener((observable, oldValue, newValue) -> filterData());
         txtTitleFilter.textProperty().addListener((observable, oldValue, newValue) -> filterData());
         txtLocationFilter.textProperty().addListener((observable, oldValue, newValue) -> filterData());
         txtMinSalaryFilter.textProperty().addListener((observable, oldValue, newValue) -> filterData());
         comboCategoryFilter.valueProperty().addListener((observable, oldValue, newValue) -> filterData());
 
-        // Automatyczne ładowanie danych przy przełączeniu zakładki
         tabPane.getSelectionModel().selectedIndexProperty().addListener(
             (ChangeListener<Number>) (obs, oldIndex, newIndex) -> {
                 if (newIndex.intValue() == 0) {
-                    // Zakładka "Wyszukaj ogłoszenia" — odśwież aktywne oferty z bazy
                     loadOffersFromDatabase();
                     filterData();
                 } else if (newIndex.intValue() == 1) {
-                    // Zakładka "Historia ogłoszeń" — odśwież aplikacje kandydata z bazy
                     loadHistoryFromDatabase();
                     filterHistoryData();
                 }
             }
         );
 
-        // Obsługa przycisku aplikowania i wygaszania przy braku selekcji
         btnViewOffer1.disableProperty().bind(tableUsers.getSelectionModel().selectedItemProperty().isNull());
         btnViewOffer11.disableProperty().bind(tableUsers1.getSelectionModel().selectedItemProperty().isNull());
 
@@ -149,8 +149,6 @@ public class WyszukiwarkaController {
         UserSession session = UserSession.getInstance();
         int candidateId = session != null ? session.getUserId() : -1;
 
-        // LEFT JOIN z Applications dla zalogowanego kandydata — pokazuje jego status aplikacji
-        // lub "Nie aplikowano" jeśli nie wysłał jeszcze podania na daną ofertę
         String query = "SELECT j.OfferID as id, j.Title, COALESCE(c.CategoryName, 'Inne') as CategoryName, j.Location, " +
                        "j.SalaryMIN, j.SalaryMAX, j.Description, " +
                        "COALESCE(e.CompanyName, 'Brak danych') as CompanyName, " +
@@ -163,7 +161,6 @@ public class WyszukiwarkaController {
                        "LEFT JOIN ApplicationStatuses aps ON a.StatusID = aps.StatusID " +
                        "WHERE COALESCE(os.StatusName, 'Aktywna') = 'Aktywna'";
 
-        System.out.println("Rozpoczynam pobieranie ofert z bazy danych dla wyszukiwarki...");
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -184,13 +181,10 @@ public class WyszukiwarkaController {
                     allOffers.add(offer);
                 }
             }
-            System.out.println("Pomyślnie załadowano " + allOffers.size() + " aktywnych ofert z bazy danych do wyszukiwarki!");
         } catch (SQLException e) {
-            System.err.println("⚠️ BŁĄD BAZY DANYCH (Wyszukiwarka): " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 
     private void loadHistoryFromDatabase() {
         myApplications.clear();
@@ -235,7 +229,6 @@ public class WyszukiwarkaController {
 
     private void filterData() {
         filteredOffers.setPredicate(offer -> {
-            // Szybkie wyszukiwanie
             String searchKeyword = txtSearchUser.getText() == null ? "" : txtSearchUser.getText().toLowerCase().trim();
             if (!searchKeyword.isEmpty()) {
                 boolean matchesTitle = offer.getTitle() != null && offer.getTitle().toLowerCase().contains(searchKeyword);
@@ -247,42 +240,32 @@ public class WyszukiwarkaController {
                     return false;
                 }
             }
-            // Filtr: Tytuł
             String titleFilter = txtTitleFilter.getText() == null ? "" : txtTitleFilter.getText().toLowerCase();
             if (!titleFilter.isEmpty() && !offer.getTitle().toLowerCase().contains(titleFilter)) {
                 return false;
             }
-            // Filtr: Kategoria (Branża)
             String catFilter = comboCategoryFilter.getValue();
             if (catFilter != null && !catFilter.equals("Wszystkie") && !offer.getCategory().equals(catFilter)) {
                 return false;
             }
-            // Filtr: Lokalizacja
             String locFilter = txtLocationFilter.getText() == null ? "" : txtLocationFilter.getText().toLowerCase();
             if (!locFilter.isEmpty() && !offer.getLocation().toLowerCase().contains(locFilter)) {
                 return false;
             }
-            // Filtr: Minimalne wynagrodzenie
-            // Oferta jest widoczna jeśli jej maksymalne wynagrodzenie >= podanego minimum
-            // Dzięki temu oferta 9000–11000 pojawi się przy filtrze "10000", bo 11000 >= 10000
             String minSalText = txtMinSalaryFilter.getText() == null ? "" : txtMinSalaryFilter.getText().trim();
             if (!minSalText.isEmpty()) {
                 try {
                     double minSalValue = Double.parseDouble(minSalText.replace(',', '.'));
                     if (offer.getSalaryMax() != null) {
-                        // Zakres oferty nie dociera do podanej kwoty — ukryj
                         if (offer.getSalaryMax().doubleValue() < minSalValue) {
                             return false;
                         }
                     } else if (offer.getSalaryMin() != null) {
-                        // Brak salaryMax — sprawdź przynajmniej salaryMin
                         if (offer.getSalaryMin().doubleValue() < minSalValue) {
                             return false;
                         }
                     }
-                } catch (NumberFormatException e) {
-                    // Ignorujemy błędy parsowania
-                }
+                } catch (NumberFormatException e) { }
             }
             return true;
         });
@@ -298,7 +281,6 @@ public class WyszukiwarkaController {
         UserSession session = UserSession.getInstance();
         int loggedInCandidateId = session != null ? session.getUserId() : 1;
 
-        // Sprawdzenie czy kandydat już aplikował na tę ofertę
         boolean alreadyApplied = false;
         String checkQuery = "SELECT 1 FROM Applications WHERE OfferID = ? AND CandidateID = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -314,7 +296,6 @@ public class WyszukiwarkaController {
             e.printStackTrace();
         }
 
-        // Sprawdzenie czy kandydat ma wgrane CV
         boolean hasCv = false;
         String cvQuery = "SELECT CVFilePath FROM Candidates WHERE CandidateID = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -336,14 +317,6 @@ public class WyszukiwarkaController {
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
         applyStylesToDialog(alert);
-        alert.getDialogPane().getStyleClass().add("details-dialog");
-
-        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
-        try {
-            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-        } catch (Exception e) {
-            System.err.println("Błąd ładowania ikony dla podglądu: " + e.getMessage());
-        }
 
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
@@ -384,16 +357,9 @@ public class WyszukiwarkaController {
                     confirmAlert.setContentText("Czy na pewno chcesz aplikować na tę ofertę bez załączonego pliku CV?\n(Zalecamy najpierw dodać go w zakładce 'Mój Profil')");
                     applyStylesToDialog(confirmAlert);
                     
-                    javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
-                    try {
-                        confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-                    } catch (Exception e) {
-                        System.err.println("Błąd ładowania ikony dla potwierdzenia: " + e.getMessage());
-                    }
-
                     Optional<ButtonType> confirmation = confirmAlert.showAndWait();
                     if (confirmation.isPresent() && confirmation.get() != ButtonType.OK) {
-                        return; // Anulujemy aplikację
+                        return; 
                     }
                 }
                 applyForJob(selectedOffer);
@@ -403,13 +369,6 @@ public class WyszukiwarkaController {
                 confirmAlert.setHeaderText("Wycofanie aplikacji");
                 confirmAlert.setContentText("Czy na pewno chcesz wycofać swoją aplikację na stanowisko " + selectedOffer.getTitle() + "?");
                 applyStylesToDialog(confirmAlert);
-
-                javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
-                try {
-                    confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-                } catch (Exception e) {
-                    System.err.println("Błąd ładowania ikony dla potwierdzenia: " + e.getMessage());
-                }
 
                 Optional<ButtonType> confirmation = confirmAlert.showAndWait();
                 if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
@@ -433,14 +392,6 @@ public class WyszukiwarkaController {
         alert.setTitle("Szczegóły oferty");
         alert.setHeaderText(selectedOffer.getTitle() + " - " + selectedOffer.getCategory());
         applyStylesToDialog(alert);
-        alert.getDialogPane().getStyleClass().add("details-dialog");
-
-        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
-        try {
-            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-        } catch (Exception e) {
-            System.err.println("Błąd ładowania ikony dla podglądu historii: " + e.getMessage());
-        }
 
         String dialogContent = "Firma/Lokalizacja: " + selectedOffer.getLocation() + "\n" +
                                "Wynagrodzenie: " + selectedOffer.getSalaryRange() + "\n\n" +
@@ -467,13 +418,6 @@ public class WyszukiwarkaController {
             confirmAlert.setHeaderText("Wycofanie aplikacji");
             confirmAlert.setContentText("Czy na pewno chcesz wycofać swoją aplikację na stanowisko " + selectedOffer.getTitle() + "?");
             applyStylesToDialog(confirmAlert);
-
-            javafx.stage.Stage confirmStage = (javafx.stage.Stage) confirmAlert.getDialogPane().getScene().getWindow();
-            try {
-                confirmStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             Optional<ButtonType> confirmation = confirmAlert.showAndWait();
             if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
@@ -506,7 +450,6 @@ public class WyszukiwarkaController {
         UserSession session = UserSession.getInstance();
         int loggedInCandidateId = session != null ? session.getUserId() : 1;
 
-        // Domyślnie nowa aplikacja ma status 'Oczekująca' (ID = 1 w bazie danych)
         String insertQuery = "INSERT INTO Applications (OfferID, CandidateID, StatusID) VALUES (?, ?, 1)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -519,18 +462,16 @@ public class WyszukiwarkaController {
             showAlert(Alert.AlertType.INFORMATION, "Sukces!", "Pomyślnie wysłano aplikację na stanowisko " + offer.getTitle() + "!");
             loadOffersFromDatabase();
             filterData();
-            loadHistoryFromDatabase(); // Odświeżenie historii aplikacji
+            loadHistoryFromDatabase(); 
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Błąd", "Nie udało się zapisać aplikacji w bazie danych.");
         }
     }
 
-    // Metoda podpięta pod przycisk "Filtry"
     @FXML
     private void obslugaPrzyciskuFiltry() {
         boolean pokazywac = !panelFiltrow.isVisible();
-
         panelFiltrow.setVisible(pokazywac);
 
         if (pokazywac) {
@@ -549,10 +490,7 @@ public class WyszukiwarkaController {
 
     @FXML
     private void handleLogout(ActionEvent event) throws IOException {
-        // Czyszczenie sesji użytkownika
         UserSession.clear();
-
-        // Przekierowanie do widoku logowania
         App.setRoot("login");
     }
 
@@ -585,9 +523,55 @@ public class WyszukiwarkaController {
         filterHistoryData();
     }
 
+   
+    // NOWA FUNKCJA STYLOWANIA OKIEN (Z ROZMIARAMI I CIENIEM) =============================
+    
     private void applyStylesToDialog(Dialog<?> dialog) {
         try {
-            dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+            // Wczytanie CSS
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("wyszukiwarka.css").toExternalForm());
+            
+            // Tryb ciemny
+            if (App.isDarkMode) {
+                dialog.getDialogPane().getStyleClass().add("dark-mode");
+            }
+
+            // Wymuszenie dopasowania wielkości okna do zawartości tekstu
+            dialog.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            // Wczytanie grafiki i nałożenie stylów
+            try {
+                Image logoIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+                
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(logoIcon);
+                
+                ImageView iconView = new ImageView(logoIcon);
+                // Zmniejszamy logo, żeby miało więcej luzu wewnątrz białej ramki
+                iconView.setFitWidth(34);
+                iconView.setFitHeight(34);
+                iconView.setPreserveRatio(true); // Gwarantuje idealne proporcje (pomaga w centrowaniu)
+                
+                // Tworzymy pojemnik na ikonę
+                javafx.scene.layout.StackPane iconContainer = new javafx.scene.layout.StackPane(iconView);
+                iconContainer.setAlignment(javafx.geometry.Pos.CENTER); // Wymusza idealne ułożenie na środku
+                iconContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 8px;");
+                
+                // Nakładamy miękki, rozmyty cień
+                DropShadow dropShadow = new DropShadow();
+                dropShadow.setColor(Color.rgb(0, 0, 0, 0.25)); // Subtelny, dość przezroczysty czarny
+                dropShadow.setRadius(12); // Większy promień = większe i bardziej miękkie rozmycie
+                dropShadow.setSpread(0.05); // Bardzo małe nasycenie brzegów cienia
+                dropShadow.setOffsetY(3); // Cień rzucany lekko w dół
+                iconContainer.setEffect(dropShadow);
+
+                dialog.setGraphic(iconContainer);
+                
+            } catch (Exception e) {
+                System.err.println("Nie udało się załadować LogoIcon.png: " + e.getMessage());
+            }
+            
         } catch (Exception e) {
             System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
         }
@@ -599,14 +583,6 @@ public class WyszukiwarkaController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         applyStylesToDialog(alert);
-        
-        javafx.stage.Stage dialogStage = (javafx.stage.Stage) alert.getDialogPane().getScene().getWindow();
-        try {
-            dialogStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png")));
-        } catch (Exception e) {
-            System.err.println("Błąd ładowania ikony dla alertu: " + e.getMessage());
-        }
-
         alert.showAndWait();
     }
 
@@ -614,5 +590,30 @@ public class WyszukiwarkaController {
     private void handleMojProfil(ActionEvent event) throws IOException {
         App.setRoot("profil");
     }
+
+    @FXML
+    private void handleToggleTheme(ActionEvent event) {
+        App.isDarkMode = !App.isDarkMode;
+
+        if (btnToggleTheme != null && btnToggleTheme.getScene() != null) {
+            App.applyTheme(btnToggleTheme.getScene());
+        } else if (tabPane != null && tabPane.getScene() != null) {
+            App.applyTheme(tabPane.getScene());
+        }
+
+        if (btnToggleTheme != null) {
+            if (App.isDarkMode) {
+                btnToggleTheme.setText("☀ Jasny Motyw"); 
+            } else {
+                btnToggleTheme.setText("🌙 Ciemny Motyw");
+            }
+        } else if (event.getSource() instanceof Button) {
+            Button clickedBtn = (Button) event.getSource();
+            if (App.isDarkMode) {
+                clickedBtn.setText("☀ Jasny Motyw"); 
+            } else {
+                clickedBtn.setText("🌙 Ciemny Motyw");
+            }
+        }
+    }
 }
-//naprawa

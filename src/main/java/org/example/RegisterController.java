@@ -48,9 +48,9 @@ public class RegisterController {
     @FXML
     private Button btnZmianaMotywu;
 
-    // USUNIĘTO: lokalną zmienną isDarkMode, korzystamy z App.isDarkMode
+    // lokalną zmienną isDarkMode, korzystamy z App.isDarkMode
 
-    // ZMIENIONO: Metoda teraz operuje na globalnym motywie
+    // Metoda teraz operuje na globalnym motywie
     @FXML
     public void zmienMotyw(ActionEvent event) {
         App.isDarkMode = !App.isDarkMode;
@@ -65,7 +65,7 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        // DODANO: Ustawienie tekstu przycisku przy wejściu na widok rejestracji
+        // Ustawienie tekstu przycisku przy wejściu na widok rejestracji
         if (btnZmianaMotywu != null) {
             if (App.isDarkMode) {
                 btnZmianaMotywu.setText("☀ Jasny Motyw");
