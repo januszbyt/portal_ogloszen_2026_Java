@@ -1,0 +1,107 @@
+.root {
+    -bg-color: #f4f7f6;
+    -panel-bg: white;
+    -text-color: #222222;
+    -accent-color: #2c3e50; /* Наш базовий темно-синій */
+    -border-color: #cccccc;
+    -border-light: #e0e0e0;
+    -row-hover: #f7f9fa;
+    -header-bg: #2c3e50;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    -fx-background-color: -bg-color;
+}
+
+/* --- Тексти --- */
+.label {
+    -fx-text-fill: -text-color;
+}
+
+/* --- СТИЛЬ ДЛЯ ЗВИЧАЙНИХ КНОПОК (Стають темно-синіми) --- */
+.button {
+    -fx-background-color: -accent-color; 
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 22px;
+    -fx-cursor: hand;
+    -fx-effect: none; 
+    -fx-border-width: 0;
+}
+
+.button:hover {
+    -fx-opacity: 0.85;
+}
+
+.button:focused {
+    -fx-background-color: -accent-color;
+    -fx-background-insets: 0;
+}
+
+/* --- СТИЛЬ ДЛЯ ЧЕРВОНИХ КНОПОК (Застосується, як тільки з'явиться ID або клас) --- */
+.button-danger, #btnUsun, #btnOdrzuc, #btnWyloguj, #btnDelete, #btnReject {
+    -fx-background-color: #d9534f;
+    -fx-text-fill: white;
+}
+
+.button-danger:hover, #btnUsun:hover, #btnOdrzuc:hover, #btnWyloguj:hover, #btnDelete:hover, #btnReject:hover {
+    -fx-background-color: #c9302c;
+    -fx-opacity: 1.0;
+}
+
+.button-danger:focused, #btnUsun:focused, #btnOdrzuc:focused, #btnWyloguj:focused, #btnDelete:focused, #btnReject:focused {
+    -fx-background-color: #d9534f;
+    -fx-background-insets: 0;
+}
+
+/* --- Решта елементів (TextField, Table, ListView) --- */
+.text-field, .text-area {
+    -fx-background-color: -panel-bg; 
+    -fx-text-fill: -text-color; 
+    -fx-border-color: -border-color; 
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+    -fx-effect: none;
+}
+.text-field:focused, .text-area:focused {
+    -fx-border-color: -accent-color; 
+    -fx-border-width: 2px;
+    -fx-background-insets: 0;
+}
+
+.combo-box {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.list-view {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+}
+.list-view .list-cell:hover { -fx-background-color: -row-hover; }
+.list-view .list-cell:selected { -fx-background-color: -accent-color; -fx-text-fill: white; }
+
+.table-view {
+    -fx-background-color: -panel-bg; 
+    -fx-border-color: -border-color; 
+    -fx-border-width: 1px;           
+    -fx-background-insets: 0; 
+}
+.table-view .column-header-background { -fx-background-color: -bg-color; -fx-border-color: -border-color; -fx-border-width: 0 0 1px 0; }
+.table-view .column-header .label { -fx-text-fill: -accent-color; -fx-font-weight: bold; }
+.table-row-cell:hover { -fx-background-color: -row-hover; }
+.table-row-cell:selected { -fx-background-color: -accent-color; }
+.table-row-cell:selected .text { -fx-fill: white; }
+
+.separator .line {
+    -fx-border-color: -border-light;
+    -fx-border-width: 1 0 0 0;
+}
