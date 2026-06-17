@@ -3,8 +3,12 @@ package org.example;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.image.Image; 
+import javafx.scene.image.ImageView; 
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import java.io.IOException;
 
 import java.sql.Connection;
@@ -48,9 +52,7 @@ public class RegisterController {
     @FXML
     private Button btnZmianaMotywu;
 
-    // lokalną zmienną isDarkMode, korzystamy z App.isDarkMode
 
-    // Metoda teraz operuje na globalnym motywie
     @FXML
     public void zmienMotyw(ActionEvent event) {
         App.isDarkMode = !App.isDarkMode;
@@ -65,7 +67,6 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        // Ustawienie tekstu przycisku przy wejściu na widok rejestracji
         if (btnZmianaMotywu != null) {
             if (App.isDarkMode) {
                 btnZmianaMotywu.setText("☀ Jasny Motyw");
@@ -74,7 +75,6 @@ public class RegisterController {
             }
         }
 
-        // Słuchacz zmiany roli w celu dynamicznego dostosowania formularza
         roleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == businessRadio) {
                 lastNameField.setVisible(false);
@@ -89,32 +89,66 @@ public class RegisterController {
         });
     }
 
-    // Metoda pomocnicza do wyświetlania okienek z komunikatami
+    // DODANA Metoda dodajaca style CSS do okien dialogowych
+    private void applyStylesToDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("login_register.css").toExternalForm());
+            
+            if (App.isDarkMode) {
+                dialog.getDialogPane().getStyleClass().add("dark-mode");
+            }
+            dialog.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            try {
+                Image logoIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(logoIcon);
+                
+                ImageView iconView = new ImageView(logoIcon);
+                iconView.setFitWidth(34);
+                iconView.setFitHeight(34);
+                iconView.setPreserveRatio(true);
+                
+                javafx.scene.layout.StackPane iconContainer = new javafx.scene.layout.StackPane(iconView);
+                iconContainer.setAlignment(javafx.geometry.Pos.CENTER);
+                iconContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 8px;");
+                
+                DropShadow dropShadow = new DropShadow();
+                dropShadow.setColor(Color.rgb(0, 0, 0, 0.25));
+                dropShadow.setRadius(12);
+                dropShadow.setOffsetY(3);
+                iconContainer.setEffect(dropShadow);
+
+                dialog.setGraphic(iconContainer);
+            } catch (Exception e) {}
+        } catch (Exception e) {
+            System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
+        }
+    }
+
+    // ZAKTUALIZOWANA Metoda pomocnicza do wyświetlania okienek (Dodano applyStylesToDialog)
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        
+        applyStylesToDialog(alert); 
+        
         alert.showAndWait();
     }
 
-    // Metoda do szyfrowania hasła 
-
-    
-// Metoda wywoływana po kliknięciu przycisku "Zarejestruj się"
     @FXML
     void handleRegister(ActionEvent event) {
-        // Pobieranie danych wpisanych przez użytkownika z usunięciem zbędnych spacji
         String firstName = firstNameField.getText() != null ? firstNameField.getText().trim() : "";
         String lastName = lastNameField.getText() != null ? lastNameField.getText().trim() : "";
         String email = emailField.getText() != null ? emailField.getText().trim() : "";                     
         String password = passwordField.getText() != null ? passwordField.getText() : "";
         String confirmPassword = confirmPasswordField.getText() != null ? confirmPasswordField.getText() : "";
 
-        // Sprawdzanie, który radioButton jest zaznaczony
         boolean isEmployer = businessRadio.isSelected();
 
-        // 1. Walidacje
         if (firstName.isEmpty() || (!isEmployer && lastName.isEmpty()) || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wszystkie pola są wymagane!");
             return;
@@ -156,20 +190,15 @@ public class RegisterController {
             return;
         }
         
-        // Ustalenie wartości roli do bazy. Pracownik czy Pracodawca
         String roleValue = isEmployer ? "Employer" : "Candidate";
 
-        // Zapytania SQL
         String insertUserSql = "INSERT INTO Users (Email, PasswordHash, Role, IsBlocked) VALUES (?, ?, ?, 0)";
         String insertCandidateSql = "INSERT INTO Candidates (CandidateID, FirstName, LastName) VALUES (?, ?, ?)";
         String insertEmployerSql = "INSERT INTO Employers (EmployerID, CompanyName) VALUES (?, ?)";
 
-        // 2. Połączenie z bazą i transakcja
         try (Connection conn = DatabaseConnection.getConnection()) {
-            // Wyłączamy AutoCommit, aby zapewnić integralność danych (transakcja)
             conn.setAutoCommit(false); 
 
-            // Wstawiamy użytkownika i pobieramy wygenerowany klucz 
             try (PreparedStatement userStmt = conn.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
                 userStmt.setString(1, email);
                 userStmt.setString(2, SecurityUtils.hashPassword(password));
@@ -180,21 +209,19 @@ public class RegisterController {
                     throw new SQLException("Tworzenie użytkownika nie powiodło się, brak zmodyfikowanych wierszy.");
                 }
 
-                // Pobieramy nadany UserID
                 try (ResultSet generatedKeys = userStmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int generatedUserId = generatedKeys.getInt(1);
 
-                        // Wstawiamy dane do tabeli podrzędnej na podstawie roli
                         if (isEmployer) {
                             try (PreparedStatement empStmt = conn.prepareStatement(insertEmployerSql)) {
-                                empStmt.setInt(1, generatedUserId); // Klucz obcy
-                                empStmt.setString(2, firstName);    // Pole firstName przechowuje nazwę firmy
+                                empStmt.setInt(1, generatedUserId); 
+                                empStmt.setString(2, firstName);    
                                 empStmt.executeUpdate();
                             }
                         } else {
                             try (PreparedStatement candStmt = conn.prepareStatement(insertCandidateSql)) {
-                                candStmt.setInt(1, generatedUserId); // Klucz obcy
+                                candStmt.setInt(1, generatedUserId); 
                                 candStmt.setString(2, firstName);
                                 candStmt.setString(3, lastName);
                                 candStmt.executeUpdate();
@@ -205,22 +232,18 @@ public class RegisterController {
                     }
                 }
                 
-                // Tutaj zatwierdzenie transakcji, jeśli wszystko przebiegło pomyślnie
                 conn.commit(); 
                 
                 showAlert(Alert.AlertType.INFORMATION, "Rejestracja pomyślna", 
                     "Konto dla roli: " + selectedRole.getText() + " zostało pomyślnie utworzone!\nMożesz się teraz zalogować."
                 );
 
-                // Przełączenie na logowanie
                 App.setRoot("login");
 
             } catch (SQLException e) {
-                // Wycofanie zmian, jeśli wystąpi jakiś błąd
                 conn.rollback(); 
                 e.printStackTrace();
                 
-                // Sprawdzenie czy email już nie istnieje w bazie
                 if(e.getErrorCode() == 1062) {
                     showAlert(Alert.AlertType.ERROR, "Błąd rejestracji", "Użytkownik o podanym adresie email już istnieje!");
                 } else {

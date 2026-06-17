@@ -3,21 +3,21 @@ package org.example;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.scene.image.Image; 
 import javafx.scene.image.ImageView; 
+import javafx.scene.layout.Region;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Random;
 
-// Dodane importy do bazy danych i szyfrowania
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.security.MessageDigest;
 
 public class LoginController {
 
@@ -36,10 +36,8 @@ public class LoginController {
     @FXML
     private Button btnZmianaMotywu;
 
-    // Inicjalizacja przy wejściu na widok logowania
     @FXML
     public void initialize() {
-        // Synchronizacja przycisku i logo z globalnym stanem motywu przy ładowaniu
         if (App.isDarkMode) {
             btnZmianaMotywu.setText("☀ Jasny Motyw"); 
             try {
@@ -53,13 +51,9 @@ public class LoginController {
         }
     }
 
-    // Obsługa globalnej flagi w App.java
     @FXML
     public void zmienMotyw(ActionEvent event) {
-        // Przełączenie globalnej flagi na przeciwną
         App.isDarkMode = !App.isDarkMode;
-        
-        // Aplikowanie motywu na całą scenę
         App.applyTheme(btnZmianaMotywu.getScene());
 
         if (App.isDarkMode) {
@@ -75,10 +69,39 @@ public class LoginController {
         }
     }
 
-    // Metoda dodajaca style CSS
+    // ZAKTUALIZOWANA Metoda dodajaca style CSS do okien dialogowych
     private void applyStylesToDialog(Dialog<?> dialog) {
         try {
-            dialog.getDialogPane().getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("login_register.css").toExternalForm());
+            
+            if (App.isDarkMode) {
+                dialog.getDialogPane().getStyleClass().add("dark-mode");
+            }
+            dialog.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            try {
+                Image logoIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(logoIcon);
+                
+                ImageView iconView = new ImageView(logoIcon);
+                iconView.setFitWidth(34);
+                iconView.setFitHeight(34);
+                iconView.setPreserveRatio(true);
+                
+                javafx.scene.layout.StackPane iconContainer = new javafx.scene.layout.StackPane(iconView);
+                iconContainer.setAlignment(javafx.geometry.Pos.CENTER);
+                iconContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 8px;");
+                
+                DropShadow dropShadow = new DropShadow();
+                dropShadow.setColor(Color.rgb(0, 0, 0, 0.25));
+                dropShadow.setRadius(12);
+                dropShadow.setOffsetY(3);
+                iconContainer.setEffect(dropShadow);
+
+                dialog.setGraphic(iconContainer);
+            } catch (Exception e) {}
         } catch (Exception e) {
             System.err.println("Nie udało się załadować stylów dla okna dialogowego.");
         }
@@ -95,31 +118,25 @@ public class LoginController {
         alert.showAndWait();
     }
 
-    // Metoda do szyfrowania hasła (identyczna jak przy rejestracji)
-
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        // Zawsze czyścimy poprzednią sesję przed nowym logowaniem
         UserSession.clear();
 
         String email = emailField.getText() != null ? emailField.getText().trim() : "";
         String password = passwordField.getText() != null ? passwordField.getText() : "";
         
-        // Walidacja: Puste pola
         if (email.isEmpty() || password.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Proszę wprowadzić email oraz hasło!");
             return;
         }
 
-        // Walidacja: Format email
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!email.matches(emailRegex)) {
             showAlert(Alert.AlertType.WARNING, "Błąd walidacji", "Wprowadzony adres email ma niepoprawny format!");
             return;
         }
 
-        // Weryfikacja danych logowania w bazie danych
         String hashedPassword = SecurityUtils.hashPassword(password);
         String sql = "SELECT u.UserID, u.Role, u.IsBlocked, c.FirstName, e.CompanyName " +
                      "FROM Users u " +
@@ -135,7 +152,6 @@ public class LoginController {
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) { 
-                    // Sprawdzenie czy konto nie jest zablokowane
                     boolean isBlocked = rs.getBoolean("IsBlocked");
                     if (isBlocked) {
                         showAlert(Alert.AlertType.ERROR, "Konto zablokowane", "Twoje konto zostało zablokowane. Skontaktuj się z administratorem.");
@@ -154,16 +170,14 @@ public class LoginController {
                     }
                     System.out.println("Zalogowano pomyślnie. Rola: " + role + ", Nazwa: " + name);
                     
-                    // Inicjalizacja sesji użytkownika (przekazujemy imię/nazwę firmy)
                     UserSession.init(userId, email, role, name);
                     
-                    // Przekierowanie zależne od roli użytkownika
                     if ("Employer".equals(role)) {
-                        App.setRoot("pracodawca"); // Upewnij się, że plik to pracodawca.fxml
+                        App.setRoot("pracodawca"); 
                     } else if ("Candidate".equals(role)) {
-                        App.setRoot("wyszukiwarka"); // Przekierowanie kandydata z serwera
+                        App.setRoot("wyszukiwarka"); 
                     } else if ("Admin".equals(role)) {
-                        App.setRoot("AdminPanel"); // Twoje przekierowanie dla admina
+                        App.setRoot("AdminPanel"); 
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Błąd logowania", "Nieznana rola użytkownika w bazie danych.");
                     }
@@ -192,7 +206,6 @@ public class LoginController {
     private void handleForgotPassword(ActionEvent event) {
         String email = "";
         
-        //  Podanie e-maila 
         while (true) {
             TextInputDialog emailDialog = new TextInputDialog(email); 
             emailDialog.setTitle("Odzyskiwanie hasła");
@@ -218,7 +231,6 @@ public class LoginController {
                 continue; 
             }
 
-            // Sprawdzenie czy ten email w ogóle istnieje w bazie
             boolean emailExists = false;
             String checkEmailSql = "SELECT 1 FROM Users WHERE Email = ?";
             try (Connection conn = DatabaseConnection.getConnection();
@@ -244,17 +256,14 @@ public class LoginController {
             break; 
         }
         
-        // Generowanie 6-cyfrowego kodu weryfikacyjnego
         Random random = new Random();
         int verificationCode = 100000 + random.nextInt(900000); 
         
-        // Symulacja wysłania wiadomości
         showAlert(Alert.AlertType.INFORMATION, "Symulacja wysyłki e-maila",
             "Wysłano wiadomość e-mail na adres: " + email + "\n\n" +
             "Twój jednorazowy kod weryfikacyjny to: " + verificationCode + "\n\n" +
             "Zapisz ten kod i wprowadź go w kolejnym kroku.");
             
-        //  Wprowadzanie kodu weryfikacyjnego 
         while (true) {
             TextInputDialog codeDialog = new TextInputDialog();
             codeDialog.setTitle("Odzyskiwanie hasła");
@@ -277,7 +286,6 @@ public class LoginController {
             break; 
         }
         
-        //  Wprowadzanie nowego hasła 
         String newPassword = "";
         while (true) {
             TextInputDialog passwordDialog = new TextInputDialog(newPassword);
@@ -323,12 +331,10 @@ public class LoginController {
             break; 
         }
         
-        //  Zapis nowego hasła do bazy danych 
         String updateSql = "UPDATE Users SET PasswordHash = ? WHERE Email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(updateSql)) {
             
-            // Szyfrujemy nowe hasło przed zapisem
             pstmt.setString(1, SecurityUtils.hashPassword(newPassword));
             pstmt.setString(2, email);
             

@@ -16,6 +16,18 @@
     -fx-background-color: -bg-color;
 }
 
+.root.dark-mode {
+    -bg-color: #121212;
+    -panel-bg: #1e1e1e;
+    -text-color: #ffffff;
+    
+    /* Zmieniamy akcent na nieco jaśniejszy, aby lepiej wyglądał na ciemnym tle */
+    -accent-color: #4ea6e8; 
+    
+    -input-bg: #2d2d2d;
+    -navbar-bg: #111111;
+}
+
 /* Karta logowania i rejestracji */
 .login-box {
     -fx-background-color: -panel-bg;
@@ -100,38 +112,50 @@
     -fx-font-size: 14px;
 }
 
-
-/* Style specjalnie dla okienek dialogowych (Alerty) */
-.dialog-pane {
-    -fx-background-color: -panel-bg;
+/* Styl dla samego przycisku "Zmień motyw" */
+.theme-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-color;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-padding: 5px 15px;
 }
 
-/* Wymuszenie czcionki i koloru dla wszystkich tekstów w oknie */
-.dialog-pane .label {
-    -fx-font-family: 'Segoe UI', sans-serif;
-    -fx-text-fill: -text-color;
-    -fx-font-size: 14px;
+.theme-button:hover {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: #ffffff;
+    -fx-opacity: 1.0; 
+}
+
+.dialog-pane {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
 }
 
 /* Tło dla górnego paska z nagłówkiem (Krok 1: Wprowadź...) */
-.dialog-pane .header-panel {
-    -fx-background-color: -panel-bg;
+.dialog-pane > .header-panel {
+    -fx-background-color: -accent-color; /* Wymuszony niebieski/zależny od motywu */
 }
 
-/* Pogrubienie dla nagłówka okienka */
-.dialog-pane .header-panel .label {
+/* Pogrubienie dla nagłówka okienka i wymuszony biały kolor */
+.dialog-pane > .header-panel > .label {
+    -fx-text-fill: white !important;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-/* Pogrubienie tekstu obok pola wpisywania (np. "Email:", "Kod:") */
-.dialog-pane > .content.label,
+/* Pogrubienie i kolor tekstu wewnątrz okienka (np. "Email:", "Twoje dane zostały...") */
+.dialog-pane .content.label,
 .dialog-pane .content .label {
-    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-text-fill: -text-color; /* Zmienia się dynamicznie (Czarne na jasnym, Białe na ciemnym) */
     -fx-font-size: 14px;
 }
 
-.dialog-pane .button {
+/* Style przycisków wewnątrz alertów ("OK", "Anuluj") */
+.dialog-pane .button-bar .button {
     -fx-background-color: -accent-color;
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
@@ -140,10 +164,11 @@
     -fx-cursor: hand;
 }
 
-.dialog-pane .button:hover {
+.dialog-pane .button-bar .button:hover {
     -fx-opacity: 0.85;
 }
 
+/* Inputy tekstowe wywołane w oknach dialogowych (np. Zapomniałem hasła) */
 .dialog-pane .text-field {
     -fx-background-color: -input-bg;
     -fx-text-fill: -text-color;
@@ -161,34 +186,4 @@
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-background-insets: 0;
-}
-
-
-
-.root.dark-mode {
-    -bg-color: #121212;
-    -panel-bg: #1e1e1e;
-    -text-color: #ffffff;
-    
-    /* Zmieniamy akcent na nieco jaśniejszy, aby lepiej wyglądał na ciemnym tle */
-    -accent-color: #4ea6e8; 
-    
-    -input-bg: #2d2d2d;
-    -navbar-bg: #111111;
-}
-
-/* Styl dla samego przycisku "Zmień motyw" */
-.theme-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: -text-color;
-    -fx-border-color: -accent-color;
-    -fx-border-width: 2px;
-    -fx-border-radius: 6px;
-    -fx-padding: 5px 15px;
-}
-
-.theme-button:hover {
-    -fx-background-color: -accent-color;
-    -fx-text-fill: #ffffff;
-    -fx-opacity: 1.0; /* Reset opacity from standard button hover */
 }
