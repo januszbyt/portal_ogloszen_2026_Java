@@ -4,6 +4,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region; // DODANO
+import javafx.scene.image.Image; // DODANO
+import javafx.scene.image.ImageView; // DODANO
+import javafx.scene.effect.DropShadow; // DODANO
+import javafx.scene.paint.Color; // DODANO
+import javafx.stage.Stage; // DODANO
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,6 +38,9 @@ public class ProfilController {
     @FXML private TextField txtNip;
     @FXML private TextArea txtDescription;
 
+    // Przycisk do zmiany motywu
+    @FXML private Button btnToggleTheme; // DODANO
+
     private int userId;
     private String userRole;
     private String dbPasswordHash;
@@ -40,6 +49,15 @@ public class ProfilController {
 
     @FXML
     public void initialize() {
+        // DODANO: Inicjalizacja tekstu przycisku motywu
+        if (btnToggleTheme != null) {
+            if (App.isDarkMode) {
+                btnToggleTheme.setText("☀ Jasny Motyw");
+            } else {
+                btnToggleTheme.setText("🌙 Ciemny Motyw");
+            }
+        }
+
         UserSession session = UserSession.getInstance();
         if (session == null) {
             try { App.setRoot("login"); } catch (IOException ignored) {}
@@ -217,6 +235,7 @@ public class ProfilController {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Trwałe usunięcie konta");
         dialog.setHeaderText("Podaj obecne hasło, aby ostatecznie potwierdzić usunięcie konta.\nUwaga: Ta akcja jest nieodwracalna i skasuje wszystkie Twoje ogłoszenia oraz aplikacje!");
+        applyStylesToDialog(dialog); // DODANO
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         PasswordField pwd = new PasswordField();
@@ -277,6 +296,54 @@ public class ProfilController {
         }
     }
 
+    // Obsługa zmiany motywu
+    @FXML
+    private void handleToggleTheme(ActionEvent event) {
+        App.isDarkMode = !App.isDarkMode;
+        App.applyTheme(btnToggleTheme.getScene());
+
+        if (App.isDarkMode) {
+            btnToggleTheme.setText("☀ Jasny Motyw");
+        } else {
+            btnToggleTheme.setText("🌙 Ciemny Motyw");
+        }
+    }
+
+    // Funkcja stylowania okien (taka sama jak w Wyszukiwarce)
+    private void applyStylesToDialog(Dialog<?> dialog) {
+        try {
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("profil.css").toExternalForm());
+            if (App.isDarkMode) {
+                dialog.getDialogPane().getStyleClass().add("dark-mode");
+            }
+            dialog.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+            try {
+                Image logoIcon = new Image(getClass().getResourceAsStream("/org/example/pictures/LogoIcon.png"));
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(logoIcon);
+                
+                ImageView iconView = new ImageView(logoIcon);
+                iconView.setFitWidth(34);
+                iconView.setFitHeight(34);
+                iconView.setPreserveRatio(true);
+                
+                javafx.scene.layout.StackPane iconContainer = new javafx.scene.layout.StackPane(iconView);
+                iconContainer.setAlignment(javafx.geometry.Pos.CENTER);
+                iconContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 8px;");
+                
+                DropShadow dropShadow = new DropShadow();
+                dropShadow.setColor(Color.rgb(0, 0, 0, 0.25));
+                dropShadow.setRadius(12);
+                dropShadow.setOffsetY(3);
+                iconContainer.setEffect(dropShadow);
+
+                dialog.setGraphic(iconContainer);
+            } catch (Exception e) {}
+        } catch (Exception e) {}
+    }
+
     // Walidacja poprawności NIP w oparciu o algorytm Modulo 11
     private boolean isValidNIP(String nip) {
         if (nip == null || !nip.matches("\\d{10}")) return false;
@@ -294,8 +361,7 @@ public class ProfilController {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
+        applyStylesToDialog(alert); // DODANO
         alert.showAndWait();
     }
 }
-
-//naprawa

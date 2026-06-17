@@ -36,7 +36,7 @@ public class LoginController {
     @FXML
     private Button btnZmianaMotywu;
 
-    // DODANO: Inicjalizacja przy wejściu na widok logowania
+    // Inicjalizacja przy wejściu na widok logowania
     @FXML
     public void initialize() {
         // Synchronizacja przycisku i logo z globalnym stanem motywu przy ładowaniu

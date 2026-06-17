@@ -1,0 +1,166 @@
+.root {
+    -bg-color: #f4f7f6;
+    -panel-bg: white;
+    -text-color: #222222;
+    -accent-color: #2c3e50;
+    -border-color: #cccccc;
+    -header-bg: #2c3e50;
+    -theme-btn-text: #ffffff; 
+    -theme-btn-border: #ffffff; 
+    -fx-background-color: -bg-color;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.root.dark-mode, .dialog-pane.dark-mode {
+    -bg-color: #121212;
+    -panel-bg: #1e1e1e;
+    -text-color: #ffffff;
+    -accent-color: #4ea6e8;
+    -border-color: #444444; 
+    -header-bg: #1e1e1e; 
+}
+
+.header-bar {
+    -fx-background-color: -header-bg;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: -border-color;
+}
+
+.header-label {
+    -fx-text-fill: #ffffff !important;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+/* ZMNIEJSZONY Przycisk Mniejszy (Wróć) */
+.button-secondary {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #222222;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-font-size: 13px; /* Mniejsza czcionka */
+    -fx-padding: 0 15px;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #cccccc;
+    -fx-cursor: hand;
+}
+
+/* ZMNIEJSZONE Przyciski Akcji (Zapisz / Usuń) */
+.button-save {
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-font-size: 16px; /* Mniejsza czcionka */
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 204, 113, 0.2), 5, 0, 0, 3);
+}
+
+.button-save:hover {
+    -fx-background-color: #27ae60;
+    -fx-cursor: hand;
+}
+
+.button-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-font-size: 16px; /* Mniejsza czcionka */
+    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.2), 5, 0, 0, 3);
+}
+
+.button-danger:hover {
+    -fx-background-color: #c0392b;
+    -fx-cursor: hand;
+}
+
+.theme-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -theme-btn-text;
+    -fx-border-color: -theme-btn-border;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 0 12px;
+}
+
+.theme-button:hover {
+    -fx-background-color: -theme-btn-border;
+    -fx-text-fill: -header-bg;
+}
+
+/* Ogólne etykiety */
+.field-label {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 14px;
+}
+
+.root.dark-mode .field-label {
+    -fx-text-fill: #aaaaaa;
+}
+
+.label-bright {
+    -fx-text-fill: -accent-color;
+    -fx-font-size: 18px;
+}
+
+.border-pane-inside-tab {
+    -fx-background-color: -panel-bg; 
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
+    -fx-border-color: -accent-color; 
+    -fx-border-width: 5px 0 0 0;
+}
+
+.text-field, .password-field, .text-area {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 8;
+    -fx-text-fill: -text-color;
+    -fx-font-size: 15px;
+    -fx-padding: 10px;
+}
+
+.text-field:focused, .password-field:focused, .text-area:focused {
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+}
+
+/* DIALOGI (Okienka Alert) */
+.dialog-pane {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -accent-color;
+    -fx-border-width: 2px;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -header-bg;
+}
+
+/* Napis w niebieskim nagłówku okna ("Sukces", "Błąd") */
+.dialog-pane > .header-panel > .label {
+    -fx-text-fill: white !important;
+    -fx-font-weight: bold;
+}
+
+/* DOPISANE: Kolor głównego tekstu wewnątrz okienka dialogowego */
+.dialog-pane .content.label {
+    -fx-text-fill: -text-color; /* Zmienna dopasowuje się do jasnego/ciemnego motywu */
+    -fx-font-size: 14px;
+}
+
+/* DOPISANE: Przycisk "OK" / "Anuluj" w oknie */
+.dialog-pane .button-bar .button {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-opacity: 0.85;
+}
