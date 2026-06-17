@@ -1,185 +1,89 @@
-**System Ofert Pracy**
+# System Ofert Pracy
 
-**Specyfikacja Wymagań Funkcjonalnych**
+**Dokumentacja techniczno-użytkowa projektu**
 
-**1. Moduł Autoryzacji i Konta (Wspólny)**
+**Autorzy:** Słysz Łukasz, Baran Sebastian, Brzozowski Konrad, Brahovska Daryna, Humennyi Yurii, Najdek Grzegorz  
+**Uczelnia:** Państwowa Akademia Nauk Stosowanych w Jarosławiu  
+**Rok akademicki:** 2025/2026  
 
-Moduł dostępny dla wszystkich niezalogowanych użytkowników oraz posiadaczy kont (zarówno kandydatów, jak i pracodawców). Odpowiada za dostęp do systemu, bezpieczeństwo i zarządzanie tożsamością.
+---
 
-**A. Rejestracja i Bezpieczeństwo**
+## Wstęp i założenie projektu
 
-* **Rejestracja użytkownika:** Możliwość założenia konta z obowiązkowym wyborem roli (Kandydat lub Pracodawca).
+Projekt „System Ofert Pracy” to nowoczesna aplikacja desktopowa stworzona w oparciu o technologię JavaFX procesem wytwórczym zwanym Agile z nastawieniem na rozmowę i osobiste zaangażowanie grupy. Jej głównym celem jest połączenie dwóch grup docelowych: kandydatów poszukujących zatrudnienia oraz pracodawców oferujących miejsca pracy. Aplikacja dostarcza obu grupom narzędzie do wygodnej publikacji i przeglądania ofert pracy oraz ułatwia proces rekrutacji, eliminując chaos związanych z tradycyjną wysyłką CV poprzez e-mail. System został podzielony na dedykowane panele dla różnych ról użytkowników: Kandydat -> Wyszukiwarka, Pracodawca -> Panel Pracodwacy oraz Administrator -> Panel Administratora. Całość opiera się na relacyjnej bazie danych MySQL, która zapewnia trwałość i integralność danych.
 
-* **Walidacja danych (****Frontend****):** Zanim dane trafią do bazy, interfejs w JavaFX sprawdza, czy email ma poprawny format (zawiera @ i domenę) oraz czy wymagane pola nie są puste.
+## Architektura i Baza Danych
 
-* **Wymogi siły hasła:** System wymusza, aby hasło miało minimum 8 znaków, w tym co najmniej jedną wielką literę, cyfrę i znak specjalny.
+Aplikacja wykorzystuje wzorzec architektoniczny MVC (Model-View-Controller) czyli jest podzielona na trzy niezależne warstwy w celu czytelności kodu oraz prostoty pracy w grupie. Widoki są zdefiniowane w plikach FXML, a logika znajduje się w odpowiadających im klasach kontrolerów. W projekcie zastosowany nowoczesny interfejs JavaFX wzbogacony o stylowanie CSS, a w tym między innymi możliwość przełączania się między jasnym i ciemnym motywem graficznym. Baza danych składa się z kilku kluczowych tabel, takich jak Users (centralna tabela autoryzacyjna), Candidates (przechowywująca dane kandydatów), Employers (przechowywująca dane pracodawców), JobOffers (przechowywująca dane ofert pracy) oraz Applications (łącząca kandydatów z ofertami pracy). Integralność danych zapewniana jest przez klucze obce oraz kaskadowe usuwanie rekordów.
 
-* **Bezpieczne przechowywanie haseł:** Hasła nie są zapisywane w bazie MySQL czystym tekstem. System używa algorytmu hashującego.
+![Architektura i Baza Danych](assets/baza1.png)
 
-* **Unikalność konta:** System sprawdza w bazie MySQL, czy podany adres email nie jest już zarejestrowany. Jeśli jest, wyświetla odpowiedni komunikat błędu.
+## 3. Moduł Autoryzacji i Bezpieczeństwa
 
-**B. Logowanie i Sesja**
+Moduł logowania i rejestracji jest pierwszym punktem styku użytkownika z aplikacją. Obsługuje on zakładanie kont zarówno dla Kandydata jak i dla Pracodawcy, jednocześnie dbając o bezpieczeństwo poprzez walidację siły hasła i jego szyfrowania.
 
-* **Logowanie i zarządzanie sesją:** Proces weryfikacji poświadczeń (login/email i hasło) w bazie danych MySQL, który po przyznaniu dostępu do właściwego panelu pozwala aplikacji zapamiętać tożsamość zalogowanego użytkownika podczas przełączania ekranów w JavaFX.
+![Moduł Autoryzacji i Bezpieczeństwa](assets/logowanie2.png)
 
-* **Mechanizm odzyskiwania hasła ("Zapomniałem hasła"):** Generowanie jednorazowego kodu w przypadku utraty dostępu do konta (symulacja wysyłki emaila).
+### 3.1. Mechanizm szyfrowania haseł
 
-**C. Zarządzanie Profilem (Rozbudowane)**
+Hasła użytkowników nigdy nie są przechowywane w bazie danych w postaci jawnego tekstu. Zamiast tego, przed zapisem do bazy, hasło poddawane jest procesowi bezpiecznego haszowania za pomocą algorytmu SHA-256. Poniższy fragment kodu z klasy SecurityUtils prezentuje ten proces:
 
-* **Podstawowa edycja:** Podgląd swoich danych, możliwość aktualizacji adresu email oraz zmiana hasła.
+![Mechanizm szyfrowania haseł](assets/hashPassword.png)
 
-* **Dla Kandydata:**
+## 4. Panel Pracodawcy
 
-* Możliwość edycji imienia i nazwiska.
+Panel Pracodawcy to scentralizowane miejsce do zarządzania rekrutacją. Zalogowany przedstawiciel firmy może publikować nowe oferty pracy, edytować istniejące oferty, zamykać procesy rekrutacji oraz, co najważniejsze, weryfikować zgłoszenia kandydatów.
 
-* Możliwość wgrania pliku CV (np. w formacie PDF), który będzie widoczny dla pracodawcy przy aplikacji.
+![Panel Pracodawcy](assets/panelPracodawcy3.png)
 
-* Pole na dodanie linku do profilu LinkedIn oraz GitHub.
+### 4.1. Publikacja nowej oferty pracy
 
-* **Dla Pracodawcy:**
+Dodawanie ogłoszeń wymaga wypełnienia intuicyjnego formularza określającego tytuł oferty, kategorię/branżę, lokalizację, minimalne i maksymalne wynagrodzenie oraz szczegółowy opis ogłoszenia co ma skutkować możliwe maksymalnym zainteresowaniem ofertą pracy ze strony kandydatów.
 
-* Możliwość dodania/edycji nazwy i krótkiego opisu firmy.
+![Zarządzanie Ogłoszeniem - formularz](assets/dodajOgloszenie.png)
 
-* Możliwość dodania NIP-u z automatyczną walidacją poprawności (sprawdzanie sumy kontrolnej).
+### 4.2. Weryfikacja Aplikacji
 
-* **Zarządzanie danymi:** Przycisk "Trwale usuń konto", który wykonuje kaskadowe usunięcie w bazie danych – kasuje użytkownika oraz wszystkie jego oferty i aplikacje z bazy MySQL.
+Po dwukrotnym naciśnięciu w zgłoszenie lewym przyciskiem myszy, pracodawca otrzymuje dostęp do szczegółowego profilu kandydata. Aplikacja ładuje dynamiczne okno dialogowe z danymi kontaktowymi, linkami (LinkedIn, GitHub) oraz specjalny przycisk pozwalający na bezpośrednie otwarcie załączonego pliku CV w formacie PDF.
 
-**2. Panel Kandydata**
+![Szczegółowe dane kandydata](assets/aplikacjaKandydata4.png)
 
-Funkcjonalności przeznaczone wyłącznie dla zalogowanych osób szukających pracy.
+## 5. Panel kandydata (Wyszukiwarka)
 
-* **Przeglądanie ofert pracy:** Wyświetlanie listy aktywnych ogłoszeń. Główne informacje na liście to: tytuł, firma, lokalizacja, wynagrodzenie.
+Kandydaci po zalogowaniu zostają przekierowani do zaawansowanej wyszukiwarki ofert pracy. Mają możliwość dynamicznego filtrowania ogłoszenie według wielu kryteriów, aby szybko odnaleźć posadę odpowiadającą ich kompetencjom i wymaganiom.
 
-* **Wyszukiwanie i filtrowanie:**
+![Wyszukiwarka ofert](assets/wyszukiwarka5.png)
 
-* Wyszukiwarka tekstowa (po tytule, nazwie firmy lub słowach kluczowych).
+### 5.1. Dynamiczne filtrowanie danych
 
-* Filtry: branża/kategoria (np. IT, Sprzedaż, Budownictwo), lokalizacja, minimalne wynagrodzenie.
+Za interaktywne filtrowanie danych w tabeli odpowiada klasa WyszukiwarkaController, która wykorzystuje strukturę FilteredList. Filtrowanie jest w pełni responsywne:
 
-* **Szczegóły oferty:** Osobny widok po kliknięciu w ofertę, pokazujący pełny opis, wymagania, benefity i datę dodania ogłoszenia.
+![Kod filtrujący](assets/filterData.png)
 
-* **Aplikowanie na stanowisko:** Przycisk "Aplikuj" w szczegółach oferty. Aplikacja zapisuje zgłoszenie kandydata w bazie.
+### 5.2. Informacja zwrotna aplikacji
 
-* **Historia aplikacji:** Zakładka "Moje zgłoszenia", w której kandydat widzi oferty, na które wysłał CV, wraz z aktualnym statusem narzuconym przez pracodawcę (np. *Oczekująca*, *W rozpatrywaniu*, *Odrzucona*, *Zatwierdzona*).
+Kandydat wykonujący czynności w panelu wyszukiwarki dostaje czytelną i klarowną informację zwrotną ze strony aplikacji co ułatwia korzystanie z niej i zapobiega dezorientacji użytkownika.
 
-**3. Panel Pracodawcy**
+![Informacja zwrotna - Sukces](assets/aplikacjaSukces6.png)
 
-Funkcjonalności dla firm publikujących ogłoszenia i rekrutujących pracowników.
+## 6. Panel Administratora
 
-* **Dodawanie nowej oferty:** Formularz z polami: tytuł stanowiska, kategoria, opis, widełki płacowe (min-max), lokalizacja.
+Administrator posiada pełen wgląd w działanie platformy i może zarządzać kontami użytkownika oraz zgłoszonymi ofertami pracy. Służy do tego dedykowana zakłada wyposażona we słane tabele analityczne.
 
-* **Zarządzanie własnymi ofertami:** Wyświetlanie listy *tylko i wyłącznie* własnych ogłoszeń. Możliwość ich edycji (np. poprawy literówek) oraz usuwania lub zamykania rekrutacji.
+![Panel Administratora](assets/adminPanel7.png)
 
-* **Przeglądanie aplikacji:** Po kliknięciu w swoje ogłoszenie, pracodawca widzi listę kandydatów, którzy na nie zaaplikowali (wraz z ich CV i linkami, jeśli zostały podane w profilu).
+### 6.1. Zarządzanie użytkownikami
 
-* **Zarządzanie statusem aplikacji:** Możliwość zmiany statusu zgłoszenia danego kandydata, co automatycznie odzwierciedli się w panelu kandydata.
+Kluczową funkcją administracyjną jest możliwość blokowania kont oraz ich usuwania (co uruchamia procedurę usuwania kaskadowego – wraz z kontem znikają wszystkie powiązane oferty i aplikacje). Funkcja blokowania w AdminPanelController wygląda następująco:
 
-**4. Panel Administratora** 
+![Kod zarządzania statusem użytkownika](assets/changeUserStatus.png)
 
-* **Zarządzanie użytkownikami:** Lista wszystkich kont w systemie z możliwością ich zablokowania lub trwałego usunięcia.
+## 7. Zarządzanie Profilem
 
-* **Moderacja ofert:** Widok wszystkich ogłoszeń w systemie z prawem do usunięcia dowolnej oferty (np. w przypadku naruszenia regulaminu lub spamu).
+Niezależnie od posiadanej roli (Kandydat czy Pracodawca), użytkownicy mają dostęp do specjalnej przestrzeni konfiguracyjnej - swojego Profilu. Panel ten adaptuje się dynamicznie w zależności od tego, kto jest aktualnie zalogowany w sesji. Kandydaci wykorzystują tę przestrzeń do zmiany adresu pocztowego, hasła, dołączonego CV (po przez FileChooser) oraz udostępnionego profilu LinkedIn i GitHub.
 
-**Definiowanie potrzeb**
+![Mój profil użytkownika](assets/profil8.png)
 
-**Oczekiwania z perspektywy Kandydata:**
+## 8. Podsumowanie
 
-* **Szybkie dotarcie do trafnych ofert:** Potrzeba intuicyjnego narzędzia z precyzyjnymi filtrami (zarobki, branża, lokalizacja), aby nie marnować czasu na przeglądanie nieadekwatnych ogłoszeń.
-
-* **Proces aplikacji bez barier:** Oczekiwanie maksymalnie uproszczonej formy wysyłania zgłoszeń bezpośrednio w aplikacji (z wykorzystaniem dodanego wcześniej CV), bez konieczności wypełniania długich formularzy zewnętrznych.
-
-* **Transparentność procesu rekrutacji:** Potrzeba informacji zwrotnej. Kandydat chce mieć stały podgląd na to, co dzieje się z jego aplikacją (poprzez widoczne zmiany statusów nadawane przez pracodawcę).
-
-* **Kontrola nad własnymi danymi:** Możliwość swobodnego zarządzania swoim profilem i aktualizowania dokumentów aplikacyjnych.
-
-**Oczekiwania z perspektywy Pracodawcy:**
-
-* **Efektywna i szybka publikacja:** Oczekiwanie prostego kreatora ogłoszeń, który pozwala sprawnie sformułować wymagania, opisać stanowisko i określić widełki płacowe.
-
-* **Scentralizowana baza aplikacji:** Potrzeba gromadzenia wszystkich odpowiedzi na dane ogłoszenie w jednym uporządkowanym miejscu, co eliminuje chaos związany z klasycznym odbieraniem CV na skrzynkę e-mail.
-
-* **Sprawna selekcja i organizacja:** Możliwość wygodnego przeglądania profili kandydatów oraz kategoryzowania ich poprzez zmianę statusów (np. odrzucenie lub zaproszenie do kolejnego etapu), co pozwala utrzymać porządek w trwających rekrutacjach.
-
-* **Elastyczność w zarządzaniu ofertami:** Potrzeba pełnej kontroli nad cyklem życia ogłoszenia – od możliwości szybkiej edycji po natychmiastowe zdjęcie oferty z tablicy w momencie obsadzenia stanowiska.
-
-**Zasady działania**
-
-**1. Reguły dostępu i ról (Access Control)**
-
-* **Niezmienność przypisanej roli****:** Każde konto jest jednoznacznie i trwale przypisane do jednej z dwóch ról (Kandydat lub Pracodawca) w momencie rejestracji. Użytkownik nie może samodzielnie zmienić swojej roli w systemie.
-
-* **Wymóg** **logowania****:** Interakcja z systemem (przeglądanie, dodawanie, aplikowanie) wymaga aktywnej sesji. Użytkownik niezalogowany nie może pominąć ekranu startowego.
-
-**2. Ograniczenia dla Kandydata**
-
-* **Unikalność aplikacji:** Kandydat może zaaplikować na konkretną ofertę pracy tylko raz. Próba ponownego wysłania zgłoszenia na to samo ogłoszenie zostanie zablokowana przez system.
-
-* **Izolacja danych:** Kandydat ma wgląd wyłącznie w historię własnych aplikacji.
-
-* **Brak możliwości zarządzania ofertam****i****:** Kandydat nie posiada interfejsu ani uprawnień do tworzenia, edycji czy usuwania ofert pracy.
-
-**3. Ograniczenia dla Pracodawcy**
-
-* **Własność ogłoszeń:** Pracodawca posiada pełne prawa (edycja, zamykanie rekrutacji) tylko i wyłącznie do ofert utworzonych ze swojego konta.
-
-* **Dostęp do aplikacji:** Pracodawca widzi zgłoszenia i dane osobowe kandydatów tylko w obrębie własnych ogłoszeń. Nie ma dostępu do ogólnej bazy kandydatów w systemie.
-
-* **Ograniczenia aplikacyjne:** Konto pracodawcy nie posiada technicznej możliwości zaaplikowania na jakąkolwiek ofertę pracy (brak przycisku "Aplikuj").
-
-**4. Reguły integralności danych**
-
-* **Wymagane pola formularza****:** Próba dodania nowej oferty bez wypełnienia kluczowych pól (tytuł, opis, przedział wynagrodzenia) jest blokowana na poziomie warstwy prezentacji i nie dociera do bazy danych.
-
-* **Kaskadowe usuwanie danych:** Usunięcie konta przez Pracodawcę powoduje bezpowrotne usunięcie z bazy wszystkich jego ofert pracy oraz powiązanych z nimi aplikacji.
-
-* Usunięcie konta przez Kandydata bezpowrotnie kasuje jego profil oraz wszystkie aplikacje wysłane na oferty pracodawców.
-
-* Trwałe usunięcie konkretnej oferty przez pracodawcę automatycznie kasuje z bazy wszystkie powiązane z nią zgłoszenia kandydatów.
-
-**Skrótowy opis: Interakcje i Przypadki Użycia**
-
-**Moduł: Autoryzacja i Zarządzanie Kontem (Wspólne)**
-
-* Rejestracja nowego użytkownika (założenie konta z wyborem roli: Kandydat lub Pracodawca).
-
-* Logowanie do systemu (weryfikacja poświadczeń i nadanie dostępu do odpowiedniego panelu).
-
-* Wylogowanie z systemu (zakończenie sesji użytkownika).
-
-* Edycja danych profilowych (zmiana hasła, nazwy firmy, imienia i nazwiska).
-
-* Trwałe usunięcie konta (kaskadowe usunięcie wszystkich danych użytkownika z bazy).
-
-**Moduł: Pracodawca**
-
-* Dodawanie nowej oferty pracy (wypełnienie formularza i publikacja ogłoszenia).
-
-* Przeglądanie listy własnych ofert (wyświetlenie ogłoszeń przypisanych tylko do zalogowanego pracodawcy).
-
-* Edycja opublikowanej oferty pracy (poprawa błędów lub aktualizacja wymagań).
-
-* Zamykanie lub usuwanie oferty pracy (zakończenie rekrutacji lub trwałe wykasowanie ogłoszenia).
-
-* Przeglądanie listy zgłoszeń (wyświetlenie kandydatów, którzy zaaplikowali na konkretną ofertę).
-
-* Zmiana statusu aplikacji kandydata (np. na "Odrzucony", "W toku", co aktualizuje się w panelu kandydata).
-
-**Moduł: Kandydat**
-
-* Przeglądanie dostępnych ofert pracy (wyświetlenie głównej listy wszystkich aktywnych ogłoszeń).
-
-* Wyszukiwanie i filtrowanie ofert (użycie paska wyszukiwania i filtrów np. lokalizacja, kategoria, wynagrodzenie).
-
-* Wyświetlanie szczegółów ogłoszenia (otwarcie pełnego opisu wybranej oferty pracy).
-
-* Aplikowanie na ofertę pracy (wysłanie zgłoszenia na wybrane stanowisko jednym kliknięciem).
-
-* Przeglądanie historii własnych aplikacji (sprawdzanie statusów wysłanych zgłoszeń).
-
-**Moduł: Administrator**
-
-* Przeglądanie listy wszystkich użytkowników.
-
-* Zarządzanie użytkownikami (blokowanie lub usuwanie kont).
-
-* Moderacja ogłoszeń (usuwanie ofert np. będących spamem).
+Stworzony System Ofert Pracy to rozbudowana aplikacja, która z powodzeniem integruje warstwę logiki, interfejs graficzny JavaFX oraz warstwę bazodanową. Zastosowanie obiektowego podejścia do programowanie, wzorca MVC i bezpiecznego zarządzania danymi sprawia, że jest to kompletne rozwiązanie spełniające wymagania nowoczesnych platform rekrutacji. Czynny udział w tym projekcie nauczył nas pracy w grupie, koordynacji zespołowej i uświadomił nam nasze mocne i słabe strony w programowaniu.
