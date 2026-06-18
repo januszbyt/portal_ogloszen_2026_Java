@@ -25,7 +25,7 @@
          </BorderPane.margin>
       </HBox>
    </top>
-
+ 
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" BorderPane.alignment="CENTER">
          <content>
@@ -67,7 +67,7 @@
                   
                </children>
                <padding>
-                  <Insets bottom="40.0" top="20.0" />
+                  <Insets bottom="40.0" top="20.0"  />
                </padding>
             </VBox>
          </content>

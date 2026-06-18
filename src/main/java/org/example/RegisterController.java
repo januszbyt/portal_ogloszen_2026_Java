@@ -89,7 +89,7 @@ public class RegisterController {
         });
     }
 
-    // DODANA Metoda dodajaca style CSS do okien dialogowych
+    //  DODANA Metoda dodajaca style CSS do okien dialogowych
     private void applyStylesToDialog(Dialog<?> dialog) {
         try {
             dialog.getDialogPane().getStylesheets().add(getClass().getResource("login_register.css").toExternalForm());

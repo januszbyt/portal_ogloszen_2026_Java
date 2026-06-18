@@ -1,5 +1,4 @@
 .root {
-    /* Będą podmieniane w ciemnym motywie */
     -bg-color: #f4f7f6;
     -panel-bg: white;
     -text-color: #222222;
@@ -7,33 +6,34 @@
     -border-color: #cccccc;
     -border-light: #e0e0e0;
     -row-hover: #f7f9fa;
-
-    /* Zmienna dla górnego paska */
     -header-bg: #2c3e50;
-
-    /* Globalne usunięcie domyślnej niebieskiej ramki JavaFX przy klikaniu */
+    
+    /* Zmienne dla przycisku zmiany motywu (Jasny motyw) */
+    -theme-btn-text: #ffffff; 
+    -theme-btn-border: #ffffff; 
+    
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-
     -fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
     -fx-background-color: -bg-color;
 }
 
-/* Tryb Ciemny */
-.root.dark-mode {
+.root.dark-mode, .dialog-pane.dark-mode {
     -bg-color: #121212;
     -panel-bg: #1e1e1e;
-    -text-color: #ffffff;
+    -text-color: #e0e0e0; /* Stonowany biały, lepszy do czytania */
     -accent-color: #4ea6e8;
     -border-color: #444444; 
-    -border-light: #333333; /* Słabo widoczny kolor dla linii w ciemnym motywie */
+    -border-light: #333333; 
     -row-hover: #2a2a2a;
-
-    /* Górny pasek teraz lekko różni się od tła */
-    -header-bg: #1e1e1e; 
+    -header-bg: #252525; /* Lekko rozjaśniony, by odcinał się od tła tabeli */
+    
+    /* Zmienne dla przycisku zmiany motywu (Ciemny motyw) - biała ramka wg prośby */
+    -theme-btn-text: #ffffff; 
+    -theme-btn-border: #ffffff; 
 }
 
-/* Górny pasek teraz czyta kolor ze zmiennej */
+
 .header-bar {
     -fx-background-color: -header-bg;
     -fx-padding: 10px 20px;
@@ -41,7 +41,6 @@
     -fx-border-color: -border-color;
 }
 
-/* Style przyciskow */
 .button {
     -fx-background-color: -accent-color; 
     -fx-text-fill: white;
@@ -52,7 +51,6 @@
     -fx-effect: none; 
     -fx-border-width: 0;
 }
-
 .button:hover {
     -fx-opacity: 0.85;
 }
@@ -60,33 +58,42 @@
 .button-danger {
     -fx-background-color: #e74c3c;
     -fx-text-fill: white;
-    -fx-effect: none;
 }
 .button-danger:hover {
     -fx-background-color: #c0392b;
 }
 
-/* Styl dla przycisku zmiany motywu inline */
+.button-secondary {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #222222;
+}
+.button-secondary:hover {
+    -fx-background-color: #cccccc;
+}
+
+/* Przycisk zmiany motywu */
 .theme-button {
     -fx-background-color: transparent;
-    -fx-text-fill: -text-color;
-    -fx-border-color: -accent-color;
+    -fx-text-fill: -theme-btn-text;
+    -fx-border-color: -theme-btn-border;
     -fx-border-width: 2px;
     -fx-border-radius: 6px;
     -fx-padding: 5px 15px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
 }
-
 .theme-button:hover {
-    -fx-background-color: -accent-color;
-    -fx-text-fill: #ffffff;
-    -fx-opacity: 1.0; /* Reset opacity from standard button hover */
+    -fx-background-color: -theme-btn-border;
+    -fx-text-fill: -header-bg; 
+    -fx-opacity: 1.0; 
 }
 
 
-/* Style dla wyszukywania */
-.tab-pane .text-field {
+.text-field, .combo-box {
     -fx-background-color: -panel-bg; 
     -fx-text-fill: -text-color; 
+    -fx-prompt-text-fill: #888888; /* Widoczny, szary tekst podpowiedzi w ciemnym motywie */
     -fx-border-color: -border-color; 
     -fx-border-width: 1px;
     -fx-border-radius: 6px;
@@ -94,40 +101,54 @@
     -fx-padding: 10px;
     -fx-effect: none;
 }
-.tab-pane .text-field:focused {
+.text-field:focused, .combo-box:focused {
     -fx-border-color: -accent-color; 
     -fx-border-width: 2px;
     -fx-background-insets: 0;
 }
 
-/* Minimalystyczne zakladki  */
-.tab-pane .tab-header-area .tab-header-background {
+.combo-box .list-cell {
+    -fx-text-fill: -text-color; 
     -fx-background-color: transparent;
 }
+.combo-box-popup .list-view {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -border-color;
+}
+.combo-box-popup .list-cell {
+    -fx-background-color: -panel-bg; 
+    -fx-text-fill: -text-color; 
+    -fx-padding: 8px;
+}
+.combo-box-popup .list-cell:filled:hover, 
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: white;
+}
 
+
+.tab-pane .tab-header-area .tab-header-background { 
+    -fx-background-color: transparent; 
+}
 .tab-pane .tab {
     -fx-background-color: transparent;
     -fx-padding: 10px 25px;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
-
 .tab-pane .tab-label {
     -fx-text-fill: #7f8c8d;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
 }
-
 .tab-pane .tab:selected {
     -fx-border-color: transparent transparent -accent-color transparent; 
     -fx-border-width: 0 0 3px 0;
 }
-
-.tab-pane .tab:selected .tab-label {
-    -fx-text-fill: -accent-color;
+.tab-pane .tab:selected .tab-label { 
+    -fx-text-fill: -accent-color; 
 }
 
-/* Karty */
 .tab-content-area > .tab-pane .tab-pane-content > BorderPane,
 .tab-pane .border-pane-inside-tab {
     -fx-background-color: -panel-bg; 
@@ -139,77 +160,65 @@
     -fx-border-radius: 12px;
 }
 
-/* Tabele */
+
 .table-view {
     -fx-background-color: -panel-bg; 
+    -fx-control-inner-background: -panel-bg; /* Usuwa domyślne białe tło pod wierszami */
     -fx-border-color: -border-color; 
     -fx-border-width: 1px;           
-    /* To wyzerowanie usuwa białą linię po lewej stronie tabeli */
     -fx-background-insets: 0; 
     -fx-effect: none;
 }
-
 .table-view:focused {
     -fx-background-insets: 0;
     -fx-border-color: -border-color;
 }
-
-/* Nagłówki tabeli - TŁO CAŁEGO PASKA */
 .table-view .column-header-background {
     -fx-background-color: -bg-color; 
     -fx-border-color: -border-color;
     -fx-border-width: 0 0 1px 0; 
     -fx-background-insets: 0;
 }
-
-/* Nagłówki tabeli - POJEDYNCZE KOMÓRKI (ID, Rola, E-mail, itd.) */
 .table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-color: -border-light; /* Użycie delikatniejszego koloru */
-    -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
+    -fx-border-color: -border-light;
+    -fx-border-width: 0 1px 0 0;
     -fx-padding: 12px 0;
     -fx-size: 50px;
-    -fx-alignment: CENTER;           /* Wyśrodkowanie nagłówków */
+    -fx-alignment: CENTER;
 }
-
 .table-view .column-header .label {
     -fx-text-fill: -accent-color; 
     -fx-font-weight: bold;
 }
-
-/* Słabo widoczne pionowe linie pomiędzy komórkami z danymi */
 .table-view .table-cell {
-    -fx-border-color: -border-light; /* Użycie delikatniejszego koloru */
-    -fx-border-width: 0 1px 0 0;     /* Linia tylko z prawej strony */
+    -fx-border-color: -border-light;
+    -fx-border-width: 0 1px 0 0;
     -fx-padding: 0 10px;
-    -fx-alignment: CENTER;           /* ZMIANA: Wyśrodkowanie tekstu w komórkach */
+    -fx-alignment: CENTER;
 }
-
-/* Gladkie, wysokie wiersze */
 .table-row-cell {
     -fx-background-color: -panel-bg; 
     -fx-border-color: transparent transparent -border-color transparent; 
     -fx-border-width: 0 0 1px 0;
     -fx-cell-size: 45px;
+    -fx-text-fill: -text-color; /* Przypisanie koloru czcionki bez użycia .text */
 }
 
-.table-row-cell:hover {
+/* Ukrycie obramowania i tła dla pustych wierszy na dole tabeli */
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover { 
     -fx-background-color: -row-hover; 
 }
-
-.table-row-cell:selected {
+.table-row-cell:selected { 
     -fx-background-color: -accent-color; 
+    -fx-text-fill: white; 
 }
 
-.table-row-cell:selected .text {
-    -fx-fill: white;
-}
-
-.table-row-cell .text {
-    -fx-fill: -text-color; 
-}
-
-/* Róg tabeli i pusty obszar za nagłówkami */
 .table-view .corner,
 .table-view .filler,
 .table-view .column-header-background .show-hide-columns-button {
@@ -217,33 +226,87 @@
     -fx-border-color: transparent;
 }
 
-/* Tło całego paska przewijania (usuwa białą obwódkę) */
+/* Paski przewijania (Scrollbars) */
 .table-view .scroll-bar {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
-
-/* Sciezka paska (track) */
 .table-view .scroll-bar .track,
 .table-view .scroll-bar .track-background {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
-
-/* Lapacz paska */
 .table-view .scroll-bar .thumb {
     -fx-background-color: -border-color;
     -fx-background-radius: 4px;
 }
-
-/* Ukrycie strzalek góra/dól i ich tla, by nie generowały białych kwadratów */
 .table-view .scroll-bar .increment-button,
 .table-view .scroll-bar .decrement-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
-
 .table-view .scroll-bar .increment-arrow,
 .table-view .scroll-bar .decrement-arrow {
     -fx-background-color: -border-color;
+}
+
+
+.dialog-pane {
+    -fx-background-color: -panel-bg;
+    -fx-border-color: -accent-color; 
+    -fx-border-width: 3px;           
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -header-bg;
+}
+
+.dialog-pane > .header-panel > .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane > .content.label {
+    -fx-text-fill: -text-color;
+    -fx-font-size: 14px;
+    -fx-wrap-text: true; 
+}
+
+.dialog-pane .text-area {
+    -fx-control-inner-background: -panel-bg;
+    -fx-background-color: -panel-bg;
+    -fx-text-fill: -text-color;
+    -fx-font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+.dialog-pane .text-area .content, 
+.dialog-pane .text-area .viewport {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: -accent-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-effect: none;
+    -fx-border-width: 0;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-opacity: 0.85;
+}
+
+.dialog-pane .button-bar .button[default-button="false"] {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #222222;
+}
+.dialog-pane .button-bar .button[default-button="false"]:hover {
+    -fx-background-color: #cccccc;
 }

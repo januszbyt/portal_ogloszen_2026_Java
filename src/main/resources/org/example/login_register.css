@@ -134,7 +134,7 @@
     -fx-border-width: 2px;
 }
 
-/* Tło dla górnego paska z nagłówkiem (Krok 1: Wprowadź...) */
+/* Tło dla górnego paska z nagłówkiem (Krok 1:  Wprowadź...) */
 .dialog-pane > .header-panel {
     -fx-background-color: -accent-color; /* Wymuszony niebieski/zależny od motywu */
 }

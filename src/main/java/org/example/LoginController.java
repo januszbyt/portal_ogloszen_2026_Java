@@ -42,7 +42,7 @@ public class LoginController {
             btnZmianaMotywu.setText("☀ Jasny Motyw"); 
             try {
                 logoImageView.setImage(new Image(getClass().getResourceAsStream("/org/example/pictures/LogoWhite.png")));
-            } catch (Exception e) { /* ignoruj błąd braku obrazka */ }
+            } catch (Exception e) { /* ignoruj błąd braku obrazka  */ }
         } else {
             btnZmianaMotywu.setText("🌙 Ciemny Motyw");
             try {
